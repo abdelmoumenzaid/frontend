@@ -1,0 +1,24 @@
+<div class="chat-bar">
+  <div class="suggestions" *ngIf="suggestions.length">
+
+    <span class="label">Suggestions :</span>
+    <button
+      class="chip"
+      *ngFor="let s of suggestions"
+      (click)="useSuggestion(s)"
+    >
+      {{ s }}
+    </button>
+  </div>
+
+  <div class="input-row">
+    <input
+      type="text"
+      [value]="value"
+      (input)="onInputChange($any($event.target).value)"
+      (keyup.enter)="onSend()"
+      placeholder="Écris ton message..."
+    />
+    <button class="send-btn" (click)="onSend()">➤</button>
+  </div>
+</div>

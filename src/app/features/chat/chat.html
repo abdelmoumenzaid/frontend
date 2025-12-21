@@ -1,1 +1,34 @@
-<p>chat works!</p>
+<div class="chat-page">
+  <header class="chat-header">
+    <div class="title">
+      <span class="icon">🧠</span>
+      <div>
+        <h1>Coach IA</h1>
+        <p>Toujours disponible pour toi</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="chat-body">
+    <div
+      *ngFor="let msg of messages"
+      [ngClass]="{
+        'msg-row': true,
+        bot: msg.from === 'bot',
+        user: msg.from === 'user'
+      }"
+    >
+      <div class="bubble">
+        <p class="text">{{ msg.text }}</p>
+        <span class="time">{{ msg.time }}</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- composant réutilisable -->
+  <app-chat-bar
+    [(value)]="input"
+    [suggestions]="suggestions"
+    (sendMessage)="onSendFromBar($event)"
+  ></app-chat-bar>
+</div>

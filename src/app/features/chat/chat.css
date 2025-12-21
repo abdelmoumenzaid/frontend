@@ -1,0 +1,134 @@
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px); /* 64px = navbar */
+}
+
+/* HEADER */
+.chat-header {
+  background-color: #0e9859;
+  color: white;
+  padding: 14px 20px;
+  flex-shrink: 0;
+}
+
+.chat-header .title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-header .icon {
+  font-size: 20px;
+}
+
+.chat-header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.chat-header p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* ZONE MESSAGES (scrollable) */
+.chat-body {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+  background-color: #f9fafb;
+}
+
+/* Messages */
+.msg-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.msg-row.bot {
+  justify-content: flex-start;
+}
+
+.msg-row.user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+}
+
+.msg-row.bot .bubble {
+  background-color: #ecfdf5;
+  border-color: #bbf7d0;
+}
+
+.text {
+  margin: 0 0 4px;
+}
+
+.time {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* SUGGESTIONS (fixes) */
+.suggestions {
+  flex-shrink: 0;
+  padding: 8px 20px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.suggestions .label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-right: 4px;
+}
+
+.chip {
+  border-radius: 999px;
+  border: none;
+  padding: 4px 10px;
+  background-color: #e5fbe9;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* BARRE INPUT (fixe en bas) */
+.chat-input {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background-color: #0e9859;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
