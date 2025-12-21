@@ -1,0 +1,11 @@
+/* .page {
+  padding: 24px;
+  background-color: #f9fafb;
+  min-height: calc(100vh - 64px);
+} */
+.page {
+  padding: 24px;
+  padding-top: 88px; /* 64px de navbar + marge */
+  background-color: #f9fafb;
+  min-height: 100vh;
+}

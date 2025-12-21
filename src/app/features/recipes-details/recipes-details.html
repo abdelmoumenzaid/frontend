@@ -1,0 +1,75 @@
+<div class="recipe-detail" *ngIf="recipe">
+  <!-- Image hero + bouton retour / favoris -->
+  <header class="hero">
+    <button class="back-btn" (click)="goBack()">←</button>
+    <img [src]="recipe.image" [alt]="recipe.name" />
+    <button class="fav-btn">♡</button>
+  </header>
+
+  <section class="content">
+    <h1>{{ recipe.name }}</h1>
+
+    <div class="meta-row">
+      <span class="pill">🔥 {{ recipe.calories }} kcal</span>
+      <span class="pill">⏱ {{ recipe.time }} min</span>
+      <span class="pill">👩‍🍳 {{ recipe.difficulty }}</span>
+    </div>
+
+    <p class="description">{{ recipe.description }}</p>
+
+    <div class="tags">
+      <span class="tag" *ngFor="let tag of recipe.tags">{{ tag }}</span>
+    </div>
+
+    <!-- Ingrédients -->
+    <section class="section">
+      <h2>Ingrédients</h2>
+      <div class="ingredients">
+        <div class="ingredient-row" *ngFor="let ing of recipe.ingredients">
+          <span>{{ ing.name }}</span>
+          <span class="qty">{{ ing.quantity }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Préparation -->
+    <section class="section">
+      <h2>Préparation</h2>
+      <ol class="steps">
+        <li *ngFor="let step of recipe.steps; index as i">
+          <span class="step-number">{{ i + 1 }}</span>
+          <span class="step-text">{{ step }}</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Infos nutritionnelles -->
+    <section class="section">
+      <h2>Informations nutritionnelles</h2>
+      <div class="nutrition-grid">
+        <div class="nutri-card">
+          <div class="value">{{ recipe.nutrition.calories }}</div>
+          <div class="label">Calories</div>
+        </div>
+        <div class="nutri-card">
+          <div class="value">{{ recipe.nutrition.protein }}g</div>
+          <div class="label">Protéines</div>
+        </div>
+        <div class="nutri-card">
+          <div class="value">{{ recipe.nutrition.carbs }}g</div>
+          <div class="label">Glucides</div>
+        </div>
+        <div class="nutri-card">
+          <div class="value">{{ recipe.nutrition.fat }}g</div>
+          <div class="label">Lipides</div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <footer class="bottom-bar">
+    <button class="primary-btn" (click)="addToPlan()">
+      Ajouter à mon plan
+    </button>
+  </footer>
+</div>

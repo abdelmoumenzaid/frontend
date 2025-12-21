@@ -1,0 +1,78 @@
+<div class="recipes-page">
+  <h1>Toutes les recettes</h1>
+
+  <!-- Recherche -->
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Rechercher une recette..."
+      [(ngModel)]="search"
+    />
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters">
+    <button
+      class="chip"
+      [class.active]="activeFilter === 'all'"
+      (click)="setFilter('all')"
+    >
+      Tout
+    </button>
+    <button
+      class="chip"
+      [class.active]="activeFilter === 'breakfast'"
+      (click)="setFilter('breakfast')"
+    >
+      Petit-déj
+    </button>
+    <button
+      class="chip"
+      [class.active]="activeFilter === 'lunch'"
+      (click)="setFilter('lunch')"
+    >
+      Déjeuner
+    </button>
+    <button
+      class="chip"
+      [class.active]="activeFilter === 'dinner'"
+      (click)="setFilter('dinner')"
+    >
+      Dîner
+    </button>
+    <button
+      class="chip"
+      [class.active]="activeFilter === 'snack'"
+      (click)="setFilter('snack')"
+    >
+      Collation
+    </button>
+  </div>
+
+  <p class="count">
+    {{ filteredRecipes.length }} recettes trouvées
+  </p>
+
+  <!-- Grille de recettes -->
+  <div class="recipes-grid">
+    <div
+      class="recipe-card"
+      *ngFor="let recipe of filteredRecipes"
+      (click)="openRecipe(recipe)"
+    >
+      <img [src]="recipe.image" [alt]="recipe.name" class="card-image" />
+      <div class="card-body">
+        <h3>{{ recipe.name }}</h3>
+        <p class="desc">{{ recipe.description }}</p>
+        <div class="meta">
+          <span class="pill">{{ recipe.calories }} kcal</span>
+          <span class="pill">{{ recipe.time }} min</span>
+          <span class="pill">{{ recipe.difficulty }}</span>
+        </div>
+        <button class="link">
+          Voir la recette →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<header class="navbar">
+  <div class="navbar-left">
+    <img src="assets/logo-bowl.png" alt="NutriCoach" class="logo" />
+    <span class="brand">NutriCoach</span>
+  </div>
+
+  <nav class="navbar-right">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Mon plan du jour
+    </a>
+    <a routerLink="/recipes" routerLinkActive="active">Recettes</a>
+    <a routerLink="/entrainement" routerLinkActive="active">Entraînement</a>
+    <a routerLink="/photo-recipe" routerLinkActive="active">Photo → Recette</a>
+    <a routerLink="/chat" routerLinkActive="active">Chat IA</a>
+    <a routerLink="/profile" routerLinkActive="active">Profil</a>
+  </nav>
+</header>

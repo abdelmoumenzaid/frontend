@@ -1,0 +1,233 @@
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* HERO */
+
+.hero {
+  background-color: #0e9859;
+  color: #ffffff;
+  padding: 24px 24px 32px;
+  border-radius: 0 0 16px 16px;
+}
+
+.hero-top h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.hero-card {
+  background-color: #0d7e4c;
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.hero-item .label {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0 0 4px;
+}
+
+.hero-item .value {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hero-item.right {
+  text-align: right;
+}
+
+.hero-progress {
+  flex: 1;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #f97316; /* orange */
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+.hero-progress .consumed {
+  margin-top: 6px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* PLAN DU JOUR */
+
+.day-plan {
+  padding: 24px;
+  background-color: #f8fafc;
+}
+
+.day-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.day-plan-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: #0e9859;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.meals {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meal-row {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+}
+
+.meal-row:hover {
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.meal-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.meal-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background-color: #fef3c7;
+}
+
+.meal-label {
+  margin: 0;
+  font-weight: 500;
+}
+
+.meal-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.meal-right .chevron {
+  font-size: 18px;
+  color: #6b7280;
+}
+.meal-block {
+  margin-bottom: 8px;
+}
+
+.recipes-list {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.recipe-card:hover {
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.recipe-image img {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recipe-content h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.recipe-desc {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #f0fdf4;
+  color: #0e9859;
+}
+
+.recipe-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  color: #0e9859;
+}
