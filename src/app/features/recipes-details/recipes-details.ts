@@ -47,7 +47,7 @@ export class RecipeDetailComponent {
       this.recipe = {
         id: 'ms1',
         name: 'Msemen au Miel',
-        image: 'assets/recipes/msemen-hero.jpg',
+        image: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
         description: 'Crêpes feuilletées marocaines traditionnelles',
         calories: 280,
         time: 20,

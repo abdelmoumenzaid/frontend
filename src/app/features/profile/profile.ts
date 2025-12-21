@@ -16,8 +16,8 @@ interface ProfileItem {
   styleUrl: './profile.css',
 })
 export class ProfileComponent {
-  name = 'Fatima';
-  email = 'fatima@example.com';
+  name = 'zaid';
+  email = 'zaid@example.com';
 
   accountItems: ProfileItem[] = [
     {

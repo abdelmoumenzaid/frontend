@@ -35,7 +35,7 @@ export class RecipesComponent {
     {
       id: 'tg1',
       name: 'Tajine de Poulet aux Olives',
-      image: 'assets/recipes/tajine-poulet-olives.jpg',
+      image: 'http://localhost:3000/api/images/recipes/tajine-poulet.jpg',
       description: 'Tajine marocain mijoté aux olives et citron confit.',
       calories: 430,
       time: 45,
@@ -45,7 +45,7 @@ export class RecipesComponent {
     {
       id: 'sd1',
       name: 'Salade Méditerranéenne',
-      image: 'assets/recipes/salade-med.jpg',
+      image: 'http://localhost:3000/api/images/recipes/salade-med.jpg',
       description: 'Salade colorée aux légumes frais et pois chiches.',
       calories: 220,
       time: 15,
@@ -55,7 +55,7 @@ export class RecipesComponent {
     {
       id: 'ms1',
       name: 'Msemen au Miel',
-      image: 'assets/recipes/msemen-miel.jpg',
+      image: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
       description: 'Crêpes feuilletées marocaines traditionnelles.',
       calories: 280,
       time: 20,
@@ -65,7 +65,7 @@ export class RecipesComponent {
     {
       id: 'sm1',
       name: 'Smoothie Bowl Avocat',
-      image: 'assets/recipes/smoothie-avocat.jpg',
+      image: 'http://localhost:3000/api/images/recipes/bowl.jpg',
       description: 'Bowl énergisant pour bien commencer la journée.',
       calories: 320,
       time: 10,

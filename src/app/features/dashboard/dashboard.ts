@@ -36,7 +36,7 @@ interface Meal {
 export class DashboardComponent {
   private router = inject(Router);
 
-  userName = 'Fatima';
+  userName = 'ZAID';
 
   targetCalories = 1800;
   consumedCalories = 850;
@@ -53,7 +53,7 @@ export class DashboardComponent {
         {
           id: 'ms1',
           name: 'Msemen au Miel',
-          image: 'assets/recipes/msemen-miel.jpg',
+          image: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
           description: 'Crêpes feuilletées marocaines traditionnelles',
           calories: 280,
           time: 20,
@@ -63,7 +63,7 @@ export class DashboardComponent {
         {
           id: 'sm1',
           name: 'Smoothie Bowl Avocat',
-          image: 'assets/recipes/smoothie-avocat.jpg',
+          image: 'http://localhost:3000/api/images/recipes/bowl.jpg',
           description: 'Bowl énergisant pour bien commencer la journée',
           calories: 320,
           time: 10,

@@ -1,34 +1,65 @@
+<!-- src/app/features/chat/chat.html -->
 <div class="chat-page">
+  <!-- Header vert -->
   <header class="chat-header">
-    <div class="title">
-      <span class="icon">🧠</span>
-      <div>
-        <h1>Coach IA</h1>
-        <p>Toujours disponible pour toi</p>
-      </div>
+    <div class="coach-icon">🏪</div>
+    <div class="coach-text">
+      <div class="coach-title">Coach IA</div>
+      <div class="coach-sub">Toujours disponible pour toi</div>
     </div>
   </header>
 
+  <!-- Zone messages (scrollable) -->
   <main class="chat-body">
-    <div
-      *ngFor="let msg of messages"
-      [ngClass]="{
-        'msg-row': true,
-        bot: msg.from === 'bot',
-        user: msg.from === 'user'
-      }"
-    >
-      <div class="bubble">
-        <p class="text">{{ msg.text }}</p>
-        <span class="time">{{ msg.time }}</span>
+    <div class="messages">
+      <div
+        *ngFor="let msg of messages"
+        class="msg-row"
+        [class.msg-bot]="msg.from === 'bot'"
+        [class.msg-user]="msg.from === 'user'"
+      >
+        <div class="bubble">
+          <p class="bubble-text">{{ msg.text }}</p>
+          <span class="bubble-time">{{ msg.time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="suggestions">
+      <div class="suggestions-title">Suggestions:</div>
+      <div class="suggestions-list">
+        <button
+          type="button"
+          class="suggestion-chip"
+          *ngFor="let s of suggestions"
+          (click)="useSuggestion(s)"
+        >
+          {{ s }}
+        </button>
       </div>
     </div>
   </main>
 
-  <!-- composant réutilisable -->
-  <app-chat-bar
-    [(value)]="input"
-    [suggestions]="suggestions"
-    (sendMessage)="onSendFromBar($event)"
-  ></app-chat-bar>
+  <!-- Barre de saisie FIXE en bas -->
+  <footer class="chat-input-bar">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="input"
+        placeholder="Écris ton message..."
+      />
+      <button type="button" class="icon-btn">
+        🎙️
+      </button>
+      <button
+        type="button"
+        class="send-btn"
+        [disabled]="!input.trim()"
+        (click)="send()"
+      >
+        📨
+      </button>
+    </div>
+  </footer>
 </div>
