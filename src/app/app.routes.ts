@@ -6,6 +6,10 @@ import { EntrainementComponent } from './features/entrainement/entrainement';
 import { PhotoRecipeComponent } from './features/photo-recipe/photo-recipe';
 import { ChatComponent } from './features/chat/chat';
 import { ProfileComponent } from './features/profile/profile';
+import { DayTrackingComponent} from './features/day-tracking/day-tracking';
+import { AddMealComponent } from './features/day-tracking/add-meal/add-meal';
+import { AddWorkoutComponent } from './features/day-tracking/add-workout/add-workout';
+import { ProfilePersonalInfoComponent } from './features/profile/personal-info/personal-info';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -16,4 +20,9 @@ export const routes: Routes = [
   { path: 'recipes/:id', component: RecipeDetailComponent },
   {path: 'chat', component: ChatComponent},
   {path: 'profil', component: ProfileComponent},
+  { path: 'calendar/:date', component: DayTrackingComponent },
+  { path: 'calendar/:date/add-meal', component: AddMealComponent },
+  { path: 'calendar/:date/add-workout', component: AddWorkoutComponent },
+  { path: 'calendar', component: DayTrackingComponent },
+  {path: 'profil/personal-info', component: ProfilePersonalInfoComponent},
 ];

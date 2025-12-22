@@ -1,0 +1,92 @@
+<div class="personal-page">
+  <header class="personal-header">
+    <button class="back-link" (click)="onCancel()">‹ Profil</button>
+    <div class="title-block">
+      <h1>Informations personnelles</h1>
+      <p class="subtitle">Mets à jour tes données de base</p>
+    </div>
+  </header>
+
+  <form class="form" (ngSubmit)="onSave()">
+    <div class="field-inline">
+      <div class="field">
+        <label>Prénom</label>
+        <input type="text" [(ngModel)]="firstName" name="firstName" />
+      </div>
+      <div class="field">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="lastName" name="lastName" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="email" name="email" />
+    </div>
+
+    <div class="field-inline">
+      <div class="field">
+        <label>Âge</label>
+        <input type="number" [(ngModel)]="age" name="age" min="0" />
+      </div>
+      <div class="field">
+        <label>Taille (cm)</label>
+        <input
+          type="number"
+          [(ngModel)]="heightCm"
+          name="heightCm"
+          min="0"
+        />
+      </div>
+      <div class="field">
+        <label>Poids (kg)</label>
+        <input
+          type="number"
+          [(ngModel)]="weightKg"
+          name="weightKg"
+          min="0"
+          step="0.1"
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Sexe</label>
+      <div class="chips-row">
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="gender === 'H'"
+          (click)="gender = 'H'"
+        >
+          Homme
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="gender === 'F'"
+          (click)="gender = 'F'"
+        >
+          Femme
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.chip-active]="gender === 'A'"
+          (click)="gender = 'A'"
+        >
+          Autre / Préfère ne pas dire
+        </button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="onCancel()">
+        Annuler
+      </button>
+      <button type="submit" class="btn-primary">
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</div>

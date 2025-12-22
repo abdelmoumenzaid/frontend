@@ -1,0 +1,323 @@
+/* Anneaux de suivi : 7 cercles sur une ligne */
+.rings-wrapper {
+  display: flex;
+  justify-content: center;      /* centre le bloc de cercles */
+  width: 100%;
+}
+
+.rings-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;      /* centre les cercles */
+  gap: 38px;                    /* espace entre chaque cercle */
+  margin-bottom: 20px;
+  flex-wrap: nowrap;            /* toujours sur une seule ligne */
+  overflow-x: auto;             /* scroll si trop étroit */
+  padding: 4px 8px;
+}
+
+.rings-row::-webkit-scrollbar {
+  height: 0;
+}
+.rings-row {
+  scrollbar-width: none;
+}
+
+.ring-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 72px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ring {
+  width: 72px;
+  height: 72px;
+  position: relative;
+}
+
+.ring-progress {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: conic-gradient(#22c55e 0deg, #1f2937 0deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-inner {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-emoji {
+  font-size: 24px;
+}
+
+.ring-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* tracking-page + header + autres styles : garde ce que tu as déjà */
+
+
+.tracking-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.tracking-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* Header */
+.tracking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;          /* tout sur une seule ligne */
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;               /* permet au texte de se compresser */
+}
+
+.back-link {
+  border: none;
+  background: none;
+  color: #059669;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.title-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.title-block h1 {
+  margin: 0;
+  font-size: 22px;
+  white-space: nowrap;        /* tout sur une ligne */
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;          /* les boutons restent sur une ligne */
+}
+
+.pill-btn {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+
+/* Summary */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 14px 16px;
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.big {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.big .unit {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.muted {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.progress-bar {
+  margin-top: 10px;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #22c55e;
+}
+
+/* Sections */
+.section {
+  margin-top: 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.text-btn {
+  border: none;
+  background: none;
+  color: #059669;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Meals */
+.meal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.meal-card {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.meal-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.meal-body {
+  flex: 1;
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.meal-label {
+  font-weight: 500;
+}
+
+.meal-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.meal-body h3 {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+/* Workouts */
+.workout-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workout-card {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.workout-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.sets-list {
+  margin-top: 8px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.set-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.set-exercise {
+  font-weight: 500;
+}
+
+.set-detail {
+  color: #6b7280;
+}
+
+/* Empty state */
+.empty {
+  margin: 0;
+  padding: 10px;
+  font-size: 14px;
+  color: #9ca3af;
+  font-style: italic;
+}
