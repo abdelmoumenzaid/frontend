@@ -7,10 +7,14 @@
       type="text"
       placeholder="Rechercher une recette..."
       [(ngModel)]="search"
+      (keyup.enter)="onSearch()"
     />
+    <!-- <button class="btn-search" (click)="onSearch()" [disabled]="loading">
+      Rechercher
+    </button> -->
   </div>
 
-  <!-- Filtres -->
+  <!-- Filtres principaux -->
   <div class="filters">
     <button
       class="chip"
@@ -47,32 +51,65 @@
     >
       Collation
     </button>
+
+    <!-- Bouton plus de filtres -->
+    <button class="chip more" (click)="toggleMoreFilters()">
+      Plus de filtres ▾
+    </button>
   </div>
 
-  <p class="count">
-    {{ filteredRecipes.length }} recettes trouvées
-  </p>
+  <!-- Panel avec toutes les catégories backend -->
+  <div class="more-filters" *ngIf="showMoreFilters">
+    <p>Catégories :</p>
+    <div class="categories-list">
+      <button
+        *ngFor="let c of categories"
+        class="chip small"
+        [class.active]="selectedCategory === c"
+        (click)="applyCategoryFilter(c)"
+      >
+        {{ c }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Compteur + Loading -->
+  <div class="status">
+    <p class="count" *ngIf="!loading">
+      {{ recipes.length }} recettes trouvées
+    </p>
+    <div *ngIf="loading" class="loading">
+      <span>Chargement des recettes...</span>
+    </div>
+  </div>
 
   <!-- Grille de recettes -->
   <div class="recipes-grid">
-    <div
-      class="recipe-card"
-      *ngFor="let recipe of filteredRecipes"
-      (click)="openRecipe(recipe)"
-    >
-      <img [src]="recipe.image" [alt]="recipe.name" class="card-image" />
-      <div class="card-body">
-        <h3>{{ recipe.name }}</h3>
-        <p class="desc">{{ recipe.description }}</p>
-        <div class="meta">
-          <span class="pill">{{ recipe.calories }} kcal</span>
-          <span class="pill">{{ recipe.time }} min</span>
-          <span class="pill">{{ recipe.difficulty }}</span>
-        </div>
-        <button class="link">
-          Voir la recette →
-        </button>
+  <div
+    class="recipe-card"
+    *ngFor="let recipe of recipes"
+    (click)="openRecipe(recipe)"
+  >
+    <img
+      [src]="recipe.image"
+      [alt]="recipe.name"
+      class="card-image"
+      [class.loading]="loading"
+    />
+    <div class="card-body">
+      <h3>{{ recipe.name }}</h3>
+      <p class="desc">{{ recipe.description }}</p>
+      <div class="meta">
+        <span class="pill">{{ recipe.calories }} kcal</span>
+        <span class="pill">{{ recipe.time }} min</span>
+        <span class="pill">{{ recipe.difficulty }}</span>
       </div>
+      <button
+        class="link"
+        (click)="openRecipe(recipe); $event.stopPropagation()"
+      >
+        Voir la recette →
+      </button>
     </div>
   </div>
 </div>

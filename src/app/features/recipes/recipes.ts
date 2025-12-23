@@ -1,9 +1,10 @@
 // src/app/features/recipes/recipes.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';  
-
+import { FormsModule } from '@angular/forms';
+import { RecipeService } from './recipe.service';
+import { Recipe } from './recipe.model';
 
 type MealType = 'all' | 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
@@ -18,6 +19,15 @@ interface RecipeCard {
   mealType: MealType;
 }
 
+// mapping visuel → catégorie backend
+const MEALTYPE_TO_CATEGORY: Record<MealType, string | null> = {
+  all: null,
+  breakfast: 'Breakfast',
+  lunch: null,
+  dinner: null,
+  snack: null,
+};
+
 @Component({
   selector: 'app-recipes',
   standalone: true,
@@ -25,71 +35,118 @@ interface RecipeCard {
   templateUrl: './recipes.html',
   styleUrl: './recipes.css',
 })
-export class RecipesComponent {
-  constructor(private router: Router) {}
+export class RecipesComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private recipeService: RecipeService
+  ) {}
 
   search = '';
   activeFilter: MealType = 'all';
 
-  recipes: RecipeCard[] = [
-    {
-      id: 'tg1',
-      name: 'Tajine de Poulet aux Olives',
-      image: 'http://localhost:3000/api/images/recipes/tajine-poulet.jpg',
-      description: 'Tajine marocain mijoté aux olives et citron confit.',
-      calories: 430,
-      time: 45,
-      difficulty: 'Facile',
-      mealType: 'lunch',
-    },
-    {
-      id: 'sd1',
-      name: 'Salade Méditerranéenne',
-      image: 'http://localhost:3000/api/images/recipes/salade-med.jpg',
-      description: 'Salade colorée aux légumes frais et pois chiches.',
-      calories: 220,
-      time: 15,
-      difficulty: 'Facile',
-      mealType: 'dinner',
-    },
-    {
-      id: 'ms1',
-      name: 'Msemen au Miel',
-      image: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
-      description: 'Crêpes feuilletées marocaines traditionnelles.',
-      calories: 280,
-      time: 20,
-      difficulty: 'Moyen',
-      mealType: 'breakfast',
-    },
-    {
-      id: 'sm1',
-      name: 'Smoothie Bowl Avocat',
-      image: 'http://localhost:3000/api/images/recipes/bowl.jpg',
-      description: 'Bowl énergisant pour bien commencer la journée.',
-      calories: 320,
-      time: 10,
-      difficulty: 'Facile',
-      mealType: 'breakfast',
-    },
-  ];
+  categories: string[] = [];
+  selectedCategory = '';
+  showMoreFilters = false;
 
-  get filteredRecipes(): RecipeCard[] {
-    return this.recipes.filter((r) => {
-      const matchesFilter =
-        this.activeFilter === 'all' || r.mealType === this.activeFilter;
-      const matchesSearch =
-        !this.search ||
-        r.name.toLowerCase().includes(this.search.toLowerCase());
-      return matchesFilter && matchesSearch;
+  loading = false;
+  recipes: RecipeCard[] = [];
+
+  ngOnInit(): void {
+    this.loadRecipes();
+    this.loadCategories();
+  }
+
+  loadRecipes(): void {
+  console.log('loadRecipes called, search=', this.search, 'filter=', this.activeFilter);
+  this.loading = true;
+
+    const searchParts: string[] = [];
+
+    // texte
+    if (this.search.trim()) {
+      searchParts.push(`title:${this.search.trim()}`);
+    }
+
+    // filtre “chips” (Petit-déj, etc.)
+    const mappedCategory = MEALTYPE_TO_CATEGORY[this.activeFilter];
+    if (mappedCategory) {
+      searchParts.push(`category:${mappedCategory}`);
+    }
+
+    // filtre catégorie avancée (Plus de filtres)
+    if (this.selectedCategory) {
+      searchParts.push(`category:${this.selectedCategory}`);
+    }
+
+    const searchQuery = searchParts.join(',');
+
+    const obs = searchQuery
+      ? this.recipeService.search(searchQuery)
+      : this.recipeService.getAll();
+
+    obs.subscribe({
+      next: (recipes: Recipe[]) => {
+        this.recipes = this.mapToRecipeCard(recipes);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement', err);
+        this.loading = false;
+      },
     });
+  }
+
+  loadCategories(): void {
+    this.recipeService.getCategories().subscribe({
+      next: (categories) => (this.categories = categories),
+      error: (err) => console.error('Erreur catégories', err),
+    });
+  }
+
+  // backend → UI
+  private mapToRecipeCard(recipes: Recipe[]): RecipeCard[] {
+    return recipes.map((r) => ({
+      id: r.id,
+      name: r.title,
+      image: r.imageUrl || 'assets/default-recipe.jpg',
+      description: r.shortDescription || '',
+      calories: r.calories || 0,
+      time: (r.prepMinutes || 0) + (r.cookMinutes || 0),
+      difficulty: this.getDifficulty(r.calories || 0),
+      mealType: 'lunch', // pour l’instant, fixe
+    }));
+  }
+
+  private getDifficulty(calories: number): 'Facile' | 'Moyen' | 'Difficile' {
+    if (calories < 400) return 'Facile';
+    if (calories < 700) return 'Moyen';
+    return 'Difficile';
+  }
+
+  onSearch(): void {
+    this.loadRecipes();
   }
 
   setFilter(filter: MealType): void {
     this.activeFilter = filter;
+    // on ne reset pas selectedCategory ici, tu peux le faire si tu veux
+    this.loadRecipes();
+  }
+
+  toggleMoreFilters(): void {
+    this.showMoreFilters = !this.showMoreFilters;
+  }
+
+  applyCategoryFilter(category: string): void {
+    this.selectedCategory = category;
+    this.showMoreFilters = false;
+    this.activeFilter = 'all'; // on neutralise les chips de base
+    this.loadRecipes();
   }
 
   openRecipe(recipe: RecipeCard): void {
-    this.router.navigate(['/recipes', recipe.id]);
-  }
+  console.log('openRecipe', recipe.id); // vérifie dans la console
+  this.router.navigate(['/recipes', recipe.id]);
+}
+
 }

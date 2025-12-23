@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RecipeService } from '../recipes/recipe.service';  // ← importer le service
+import { Recipe } from '../recipes/recipe.model';
 
 interface Ingredient {
   name: string;
@@ -33,59 +35,66 @@ interface RecipeDetail {
   templateUrl: './recipes-details.html',
   styleUrl: './recipes-details.css',
 })
-export class RecipeDetailComponent {
+export class RecipeDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private recipeService = inject(RecipeService);
 
-  recipe!: RecipeDetail;
+  recipe?: RecipeDetail;
 
-  constructor() {
+  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
 
-    // Pour l’instant, mock en dur. Plus tard → appel API.
-    if (id === 'ms1') {
-      this.recipe = {
-        id: 'ms1',
-        name: 'Msemen au Miel',
-        image: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
-        description: 'Crêpes feuilletées marocaines traditionnelles',
-        calories: 280,
-        time: 20,
-        difficulty: 'Moyen',
-        tags: ['Traditionnel', 'Petit-déjeuner'],
-        ingredients: [
-          { name: 'Farine', quantity: '300g' },
-          { name: 'Eau tiède', quantity: '250ml' },
-          { name: 'Sel', quantity: '1 c.à.c' },
-          { name: 'Huile', quantity: '50ml' },
-          { name: 'Miel', quantity: '3 c.à.s' },
-        ],
-        steps: [
-          "Pétrir la pâte jusqu'à élasticité",
-          'Laisser reposer 30 minutes',
-          'Étaler finement et plier',
-          'Cuire à la poêle des deux côtés',
-          'Servir chaud avec du miel',
-        ],
-        nutrition: {
-          calories: 280,
-          protein: 6,
-          carbs: 48,
-          fat: 8,
-        },
-      };
-    } else {
-      // fallback
-      this.router.navigate(['/dashboard']);
+    if (!id) {
+      this.router.navigate(['/recipes']);
+      return;
     }
+
+    this.recipeService.getById(id).subscribe({
+      next: (r: Recipe) => {
+        const ingredients: Ingredient[] = r.ingredientsJson
+          ? JSON.parse(r.ingredientsJson)
+          : [];
+
+        const steps: string[] = (r.instructions ?? '')
+          .split('\n')
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+
+        this.recipe = {
+          id: r.id,
+          name: r.title,
+          image: r.imageUrl || 'assets/default-recipe.jpg',
+          description: r.shortDescription || '',
+          calories: r.calories || 0,
+          time: (r.prepMinutes || 0) + (r.cookMinutes || 0),
+          difficulty: 'Moyen',
+          tags: r.tags ? r.tags.split(',').map(t => t.trim()) : [],
+          ingredients,
+          steps,
+          nutrition: {
+            calories: r.calories || 0,
+            protein: r.proteinG || 0,
+            carbs: r.carbsG || 0,
+            fat: r.fatG || 0,
+          },
+        };
+      },
+      error: (err) => {
+        console.error('Erreur recette', err);
+        this.router.navigate(['/recipes']);
+      },
+    });
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/recipes']);
   }
 
   addToPlan(): void {
-    // TODO: appel API pour ajouter au plan
-    console.log('Ajouter au plan', this.recipe.id);
+    if (this.recipe) {
+      console.log('Ajouter au plan', this.recipe.id);
+    }
   }
 }
+

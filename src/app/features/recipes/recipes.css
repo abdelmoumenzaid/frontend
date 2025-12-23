@@ -109,3 +109,30 @@ h1 {
   cursor: pointer;
   padding: 0;
 }
+/* bouton Plus de filtres */
+.chip.more {
+  background-color: #e5e7eb;
+}
+
+/* conteneur du bloc de filtres avancés */
+.more-filters {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+/* grille des catégories (Goat, Beef, Vegan, etc.) */
+.categories-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* chips un peu plus petites dans le panneau */
+.chip.small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
