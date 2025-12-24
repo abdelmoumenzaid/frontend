@@ -29,4 +29,10 @@ export class RecipeService {
     }
     return this.http.get<Recipe[]>(`${this.baseUrl}/search`, { params });
   }
+  generateAIRecipe(prompt: string): Observable<Recipe> {
+    const params = new HttpParams().set('prompt', prompt);
+    return this.http.post<Recipe>('http://localhost:8081/api/ai/generate-and-save', params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+  }
 }

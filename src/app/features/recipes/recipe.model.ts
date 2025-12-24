@@ -14,6 +14,9 @@ export interface Recipe {
   category: string | null;
   area: string | null;
   tags: string | null;
-    instructions: string | null;
-    ingredientsJson: string | null;
+  instructions: string | null;
+  ingredientsJson: string | null;
+  
+  // AJOUTE CES 2 LIGNES
+  externalId?: string | null;
 }
