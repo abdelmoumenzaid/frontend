@@ -11,9 +11,9 @@
 
   <!-- Zone messages (scrollable) -->
   <main class="chat-body">
-    <div class="messages">
+    <div class="messages" #chatMessages>
       <div
-        *ngFor="let msg of messages"
+        *ngFor="let msg of messages; trackBy: trackByIndex"
         class="msg-row"
         [class.msg-bot]="msg.from === 'bot'"
         [class.msg-user]="msg.from === 'user'"
@@ -48,6 +48,7 @@
         type="text"
         [(ngModel)]="input"
         placeholder="Écris ton message..."
+        (keyup)="onKeyUp($event)"
       />
       <button type="button" class="icon-btn">
         🎙️
@@ -55,7 +56,7 @@
       <button
         type="button"
         class="send-btn"
-        [disabled]="!input.trim()"
+        [disabled]="!input.trim() || loading"
         (click)="send()"
       >
         📨
