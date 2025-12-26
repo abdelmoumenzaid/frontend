@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { marked } from 'marked';
+
 
 import {
   ChatService,
@@ -21,6 +23,7 @@ interface Message {
   from: 'bot' | 'user';
   text?: string;
   time: string;
+  htmlText?: string;
   recipes?: ChatRecipeCard[];
 }
 
@@ -53,18 +56,22 @@ export class ChatComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.sessionId = this.getOrCreateSessionId();
-    this.restoreMessages();
+  this.sessionId = this.getOrCreateSessionId();
+  this.restoreMessages();
 
-    if (this.messages.length === 0) {
-      this.messages.push({
-        from: 'bot',
-        text: "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?",
-        time: this.nowTime(),
-      });
-      this.saveMessages();
-    }
+  if (this.messages.length === 0) {
+    const text =
+      "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?";
+    this.messages.push({
+      from: 'bot',
+      text,
+      htmlText: marked.parse(text) as string,   // ← ajouté
+      time: this.nowTime(),
+    });
+    this.saveMessages();
   }
+}
+
 
   ngAfterViewInit(): void {
     this.scrollToBottom();
@@ -166,32 +173,42 @@ export class ChatComponent implements OnInit, AfterViewInit {
       lower.includes('plats')
     ) {
       this.chatService.sendRecipePrompt(text, this.sessionId).subscribe({
-        next: (resp: ChatRecipeResponse) => {
-          this.zone.run(() => {
-            this.loading = false;
-            this.messages.push({
-              from: 'bot',
-              text: resp.intro,
-              time: this.nowTime(),
-              recipes: resp.recipes && resp.recipes.length ? resp.recipes : undefined,
-            });
-            this.saveMessages();
-            this.scrollToBottom();
+       next: (resp: ChatRecipeResponse) => {
+        this.zone.run(() => {
+          this.loading = false;
+
+          const introText = resp.intro ?? '';
+          const htmlText = marked.parse(introText) as string;
+
+          this.messages.push({
+            from: 'bot',
+            text: introText,
+            htmlText,
+            time: this.nowTime(),
+            recipes:
+              resp.recipes && resp.recipes.length ? resp.recipes : undefined,
           });
-        },
+          this.saveMessages();
+          this.scrollToBottom();
+        });
+      },
+
         error: () => {
           this.zone.run(() => {
             this.loading = false;
+            const text =
+              'Désolé, une erreur est survenue. Réessaie dans un instant ou reformule ta question.';
             this.messages.push({
               from: 'bot',
-              text:
-                "Désolé, une erreur est survenue pour les recettes. Réessaie dans un instant.",
+              text,
+              htmlText: marked.parse(text) as string,
               time: this.nowTime(),
             });
             this.saveMessages();
             this.scrollToBottom();
           });
         },
+
       });
       return;
     }
@@ -201,30 +218,23 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     this.chatService.sendMessage(text, this.sessionId, history).subscribe({
       next: (resp) => {
-        this.zone.run(() => {
-          this.loading = false;
-          this.messages.push({
-            from: 'bot',
-            text: resp.answer,
-            time: this.nowTime(),
-          });
-          this.saveMessages();
-          this.scrollToBottom();
-        });
-      },
-      error: () => {
-        this.zone.run(() => {
-          this.loading = false;
-          this.messages.push({
-            from: 'bot',
-            text:
-              'Désolé, une erreur est survenue. Réessaie dans un instant ou reformule ta question.',
-            time: this.nowTime(),
-          });
-          this.saveMessages();
-          this.scrollToBottom();
-        });
-      },
+  this.zone.run(() => {
+    this.loading = false;
+
+    const answerText = resp.answer ?? '';
+    const htmlText = marked.parse(answerText) as string;
+
+    this.messages.push({
+      from: 'bot',
+      text: answerText,
+      htmlText,
+      time: this.nowTime(),
+    });
+    this.saveMessages();
+    this.scrollToBottom();
+  });
+},
+
     });
   }
 

@@ -29,14 +29,20 @@
         [class.msg-user]="msg.from === 'user'"
       >
         <div class="bubble">
-          <p class="bubble-text" *ngIf="msg.text">{{ msg.text }}</p>
+          <!-- <p class="bubble-text" *ngIf="msg.text">{{ msg.text }}</p> -->
+           <p
+            class="bubble-text"
+            *ngIf="msg.text"
+            [innerHTML]="msg.htmlText || msg.text"
+          ></p>
+
           <span class="bubble-time">{{ msg.time }}</span>
 
           <!-- Cartes recette IA -->
           <div *ngIf="msg.recipes?.length" class="recipes-row">
             <div
               class="recipe-card"
-              *ngFor="let r of msg.recipes"
+              *ngFor="let r of msg.recipes "
             >
               <div class="recipe-card-image">
                 <img
