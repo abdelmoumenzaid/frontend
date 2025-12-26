@@ -21,6 +21,8 @@ export const routes: Routes = [
   { path: 'entrainement', component: EntrainementComponent },
   { path: 'photo-recipe', component: PhotoRecipeComponent },
   { path: 'chat', component: ChatComponent },
+  { path: '', redirectTo: 'chat', pathMatch: 'full' },
+  
   { path: 'profil', component: ProfileComponent },
   { path: 'profil/personal-info', component: ProfilePersonalInfoComponent },
 

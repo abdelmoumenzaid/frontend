@@ -1,12 +1,27 @@
-import { Component, ViewChild, ElementRef, NgZone } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  NgZone,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+import {
+  ChatService,
+  ChatRecipeResponse,
+  RecipeCard as ChatRecipeCard,
+} from './chat.service';
 
 interface Message {
   from: 'bot' | 'user';
-  text: string;
+  text?: string;
   time: string;
+  recipes?: ChatRecipeCard[];
 }
 
 @Component({
@@ -16,17 +31,10 @@ interface Message {
   templateUrl: './chat.html',
   styleUrls: ['./chat.css'],
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit, AfterViewInit {
   @ViewChild('chatMessages') chatMessages!: ElementRef<HTMLDivElement>;
 
-  messages: Message[] = [
-    {
-      from: 'bot',
-      text: "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?",
-      time: this.nowTime(),
-    },
-  ];
-
+  messages: Message[] = [];
   suggestions: string[] = [
     'Adapter mon plan du jour',
     'Moins de calories le soir',
@@ -36,11 +44,87 @@ export class ChatComponent {
 
   input = '';
   loading = false;
+  private sessionId = '';
 
   constructor(
-    private http: HttpClient,
-    private zone: NgZone
+    private chatService: ChatService,
+    private zone: NgZone,
+    private router: Router
   ) {}
+
+  ngOnInit(): void {
+    this.sessionId = this.getOrCreateSessionId();
+    this.restoreMessages();
+
+    if (this.messages.length === 0) {
+      this.messages.push({
+        from: 'bot',
+        text: "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?",
+        time: this.nowTime(),
+      });
+      this.saveMessages();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
+  // ---- Helpers navigateur / localStorage ----
+
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && !!window.localStorage;
+  }
+
+  private getOrCreateSessionId(): string {
+    if (!this.isBrowser()) {
+      return 'ssr-session';
+    }
+    const existing = localStorage.getItem('chat_session_id');
+    if (existing) return existing;
+
+    const id = crypto.randomUUID();
+    localStorage.setItem('chat_session_id', id);
+    return id;
+  }
+
+  private restoreMessages(): void {
+    if (!this.isBrowser()) {
+      this.messages = [];
+      return;
+    }
+    try {
+      const raw = localStorage.getItem('chat_messages');
+      if (raw) {
+        this.messages = JSON.parse(raw);
+      }
+    } catch (e) {
+      console.error('Erreur restore messages:', e);
+      this.messages = [];
+    }
+  }
+
+  private saveMessages(): void {
+    if (!this.isBrowser()) return;
+    try {
+      localStorage.setItem('chat_messages', JSON.stringify(this.messages));
+    } catch (e) {
+      console.error('Erreur save messages:', e);
+    }
+  }
+
+  // ---- Construction de l’historique pour le backend ----
+
+  private buildHistoryForBackend(): { role: 'user' | 'assistant'; content: string }[] {
+    return this.messages
+      .filter((m) => !!m.text)
+      .map((m) => ({
+        role: m.from === 'user' ? 'user' : 'assistant',
+        content: m.text as string,
+      }));
+  }
+
+  // ---- UI helpers ----
 
   private nowTime(): string {
     const now = new Date();
@@ -59,29 +143,39 @@ export class ChatComponent {
     }, 50);
   }
 
+  // ---- Envoi message ----
+
   send(): void {
     const text = this.input.trim();
     if (!text || this.loading) return;
 
     const t = this.nowTime();
     this.messages.push({ from: 'user', text, time: t });
+    this.saveMessages();
     this.input = '';
     this.loading = true;
     this.scrollToBottom();
 
-    this.http
-      .post<{ answer: string }>('http://localhost:8081/api/ai/chat', {
-        message: text,
-      })
-      .subscribe({
-        next: (resp) => {
+    const lower = text.toLowerCase();
+
+    // 1) Recettes → endpoint spécial
+    if (
+      lower.includes('recette') ||
+      lower.includes('recettes') ||
+      lower.includes('plat') ||
+      lower.includes('plats')
+    ) {
+      this.chatService.sendRecipePrompt(text, this.sessionId).subscribe({
+        next: (resp: ChatRecipeResponse) => {
           this.zone.run(() => {
             this.loading = false;
             this.messages.push({
               from: 'bot',
-              text: resp.answer,
+              text: resp.intro,
               time: this.nowTime(),
+              recipes: resp.recipes && resp.recipes.length ? resp.recipes : undefined,
             });
+            this.saveMessages();
             this.scrollToBottom();
           });
         },
@@ -91,13 +185,103 @@ export class ChatComponent {
             this.messages.push({
               from: 'bot',
               text:
-                "Désolé, une erreur est survenue. Réessaie dans un instant ou reformule ta question.",
+                "Désolé, une erreur est survenue pour les recettes. Réessaie dans un instant.",
               time: this.nowTime(),
             });
+            this.saveMessages();
             this.scrollToBottom();
           });
         },
       });
+      return;
+    }
+
+    // 2) Chat texte classique avec contexte
+    const history = this.buildHistoryForBackend();
+
+    this.chatService.sendMessage(text, this.sessionId, history).subscribe({
+      next: (resp) => {
+        this.zone.run(() => {
+          this.loading = false;
+          this.messages.push({
+            from: 'bot',
+            text: resp.answer,
+            time: this.nowTime(),
+          });
+          this.saveMessages();
+          this.scrollToBottom();
+        });
+      },
+      error: () => {
+        this.zone.run(() => {
+          this.loading = false;
+          this.messages.push({
+            from: 'bot',
+            text:
+              'Désolé, une erreur est survenue. Réessaie dans un instant ou reformule ta question.',
+            time: this.nowTime(),
+          });
+          this.saveMessages();
+          this.scrollToBottom();
+        });
+      },
+    });
+  }
+
+  // ---- Navigation vers détail recette ----
+
+  openRecipe(r: ChatRecipeCard): void {
+    if (r.id) {
+      this.router.navigate(['/recipes', r.id]);
+      return;
+    }
+
+    if (!r.title) {
+      console.warn('Recette sans titre, impossible de créer le détail');
+      return;
+    }
+
+    const prompt = `Crée une recette détaillée pour : ${r.title}`;
+    this.loading = true;
+
+    this.chatService.materializeRecipeFromPrompt(prompt).subscribe({
+      next: (recipe: any) => {
+        this.zone.run(() => {
+          this.loading = false;
+          if (recipe && recipe.id) {
+            this.router.navigate(['/recipes', recipe.id]);
+          } else {
+            console.error('Réponse generate-and-save sans id', recipe);
+          }
+        });
+      },
+      error: (err) => {
+        this.zone.run(() => {
+          this.loading = false;
+          console.error('Erreur materializeRecipeFromPrompt', err);
+        });
+      },
+    });
+  }
+
+  // ---- Effacer la conversation ----
+
+  clearChat(): void {
+    this.messages = [];
+    if (this.isBrowser()) {
+      try {
+        localStorage.removeItem('chat_messages');
+      } catch (e) {
+        console.error('Erreur clear messages:', e);
+      }
+    }
+    this.messages.push({
+      from: 'bot',
+      text: "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?",
+      time: this.nowTime(),
+    });
+    this.saveMessages();
+    this.scrollToBottom();
   }
 
   useSuggestion(s: string): void {
@@ -114,5 +298,11 @@ export class ChatComponent {
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  onRecipeImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.onerror = null;
+    img.src = 'https://picsum.photos/seed/recipe-fallback/800/400';
   }
 }

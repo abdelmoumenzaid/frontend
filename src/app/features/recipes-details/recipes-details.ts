@@ -18,8 +18,8 @@ interface RecipeDetail {
   time: number;
   difficulty: string;
   tags: string[];
-  ingredients: Ingredient[];
-  steps: string[];
+  ingredients: Ingredient[] | undefined;
+  steps: string[] | undefined;
   nutrition: {
     calories: number;
     protein: number;
@@ -43,49 +43,55 @@ export class RecipeDetailComponent implements OnInit {
   recipe?: RecipeDetail;
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-
-    if (!id) {
-      this.router.navigate(['/recipes']);
-      return;
-    }
-
-    this.recipeService.getById(id).subscribe({
-      next: (r: Recipe) => {
-        const ingredients: Ingredient[] = r.ingredientsJson
-          ? JSON.parse(r.ingredientsJson)
-          : [];
-
-        const steps: string[] = (r.instructions ?? '')
-          .split('\n')
-          .map(s => s.trim())
-          .filter(s => s.length > 0);
-
-        this.recipe = {
-          id: r.id,
-          name: r.title,
-          image: r.imageUrl || 'assets/default-recipe.jpg',
-          description: r.shortDescription || '',
-          calories: r.calories || 0,
-          time: (r.prepMinutes || 0) + (r.cookMinutes || 0),
-          difficulty: 'Moyen',
-          tags: r.tags ? r.tags.split(',').map(t => t.trim()) : [],
-          ingredients,
-          steps,
-          nutrition: {
-            calories: r.calories || 0,
-            protein: r.proteinG || 0,
-            carbs: r.carbsG || 0,
-            fat: r.fatG || 0,
-          },
-        };
-      },
-      error: (err) => {
-        console.error('Erreur recette', err);
-        this.router.navigate(['/recipes']);
-      },
-    });
+  const id = this.route.snapshot.paramMap.get('id');
+  console.log('detail id =', id);
+  if (!id) {
+    this.router.navigate(['/recipes']);
+    return;
   }
+
+  this.recipeService.getById(id).subscribe({
+    next: (r: Recipe) => {
+      console.log('API detail OK', r);
+
+      const ingredients: Ingredient[] = r.ingredientsJson
+        ? JSON.parse(r.ingredientsJson)
+        : [];
+
+      const steps: string[] = (r.instructions ?? '')
+        .split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      this.recipe = {
+        id: r.id,
+        name: r.title,
+        image: r.imageUrl || 'assets/default-recipe.jpg',
+        description: r.shortDescription || '',
+        calories: r.calories || 0,
+        time: (r.prepMinutes || 0) + (r.cookMinutes || 0),
+        difficulty: 'Moyen',
+        tags: r.tags ? r.tags.split(',').map(t => t.trim()) : [],
+        ingredients,
+        steps,
+        nutrition: {
+          calories: r.calories || 0,
+          protein: r.proteinG || 0,
+          carbs: r.carbsG || 0,
+          fat: r.fatG || 0,
+        },
+      };
+      console.log('mapped recipe =', this.recipe);
+    },
+    error: (err) => {
+      console.error('Erreur recette', err);
+      this.router.navigate(['/recipes']);
+    },
+  });
+}
+
+
+
 
   goBack(): void {
     this.router.navigate(['/recipes']);

@@ -1,46 +1,41 @@
 <div class="recipe-detail" *ngIf="recipe as r">
-  <header class="hero">
-    <button class="back-btn" (click)="goBack()">←</button>
+  <button class="back-btn" type="button" (click)="goBack()">
+    ← Retour aux recettes
+  </button>
+
+  <div class="hero">
     <img [src]="r.image" [alt]="r.name" />
-    <button class="fav-btn">♡</button>
-  </header>
+  </div>
 
-  <section class="content">
+  <div class="content">
     <h1>{{ r.name }}</h1>
-
-    <div class="meta-row">
-      <span class="pill">🔥 {{ r.calories }} kcal</span>
-      <span class="pill">⏱ {{ r.time }} min</span>
-      <span class="pill">👩‍🍳 {{ r.difficulty }}</span>
-    </div>
-
     <p class="description">{{ r.description }}</p>
 
-    <div class="tags">
-      <span class="tag" *ngFor="let tag of r.tags">{{ tag }}</span>
+    <div class="meta-row">
+      <span class="pill">{{ r.calories }} kcal</span>
+      <span class="pill">{{ r.time }} min</span>
+      <span class="pill">{{ r.difficulty }}</span>
     </div>
 
-    <section class="section">
+    <div class="section ingredients" *ngIf="r.ingredients?.length">
       <h2>Ingrédients</h2>
-      <div class="ingredients">
-        <div class="ingredient-row" *ngFor="let ing of r.ingredients">
-          <span>{{ ing.name }}</span>
-          <span class="qty">{{ ing.quantity }}</span>
-        </div>
+      <div class="ingredient-row" *ngFor="let ing of r.ingredients">
+        <span>{{ ing.name }}</span>
+        <span class="qty">{{ ing.quantity }}</span>
       </div>
-    </section>
+    </div>
 
-    <section class="section">
+    <div class="section" *ngIf="r.steps?.length">
       <h2>Préparation</h2>
-      <ol class="steps">
-        <li *ngFor="let step of r.steps; index as i">
-          <span class="step-number">{{ i + 1 }}</span>
-          <span class="step-text">{{ step }}</span>
+      <ul class="steps">
+        <li *ngFor="let step of r.steps; let i = index">
+          <div class="step-number">{{ i + 1 }}</div>
+          <div class="step-text">{{ step }}</div>
         </li>
-      </ol>
-    </section>
+      </ul>
+    </div>
 
-    <section class="section">
+    <div class="section">
       <h2>Informations nutritionnelles</h2>
       <div class="nutrition-grid">
         <div class="nutri-card">
@@ -48,24 +43,22 @@
           <div class="label">Calories</div>
         </div>
         <div class="nutri-card">
-          <div class="value">{{ r.nutrition.protein }}g</div>
+          <div class="value">{{ r.nutrition.protein }} g</div>
           <div class="label">Protéines</div>
         </div>
         <div class="nutri-card">
-          <div class="value">{{ r.nutrition.carbs }}g</div>
+          <div class="value">{{ r.nutrition.carbs }} g</div>
           <div class="label">Glucides</div>
         </div>
         <div class="nutri-card">
-          <div class="value">{{ r.nutrition.fat }}g</div>
+          <div class="value">{{ r.nutrition.fat }} g</div>
           <div class="label">Lipides</div>
         </div>
       </div>
-    </section>
-  </section>
+    </div>
+  </div>
+</div>
 
-  <footer class="bottom-bar">
-    <button class="primary-btn" (click)="addToPlan()">
-      Ajouter à mon plan
-    </button>
-  </footer>
+<div *ngIf="!recipe" class="empty-state">
+  <p>Chargement ou recette introuvable…</p>
 </div>

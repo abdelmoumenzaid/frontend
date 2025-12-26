@@ -50,22 +50,18 @@
 }
 
 /* Messages : zone qui scroll */
-/* .messages {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
-} */
 .messages {
   flex: 1;
   overflow-y: auto;      /* le scroll fonctionne */
   padding-right: 4px;
   scrollbar-width: none; /* Firefox : cache la barre */
-
-  /* Chrome, Edge, Safari */
 }
+
+/* Chrome, Edge, Safari */
 .messages::-webkit-scrollbar {
   display: none;
 }
+
 /* Ligne message */
 .msg-row {
   display: flex;
@@ -181,6 +177,7 @@
   opacity: 0.5;
   cursor: default;
 }
+
 /* Typing indicator */
 .typing-indicator {
   display: flex;
@@ -208,4 +205,116 @@
 .chat-input:focus {
   outline: 2px solid #4f46e5;
   outline-offset: 2px;
+}
+
+/* Carrousel de recettes */
+.recipes-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+
+  -ms-overflow-style: none;  /* IE / Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.recipes-row::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
+
+/* Carte recette */
+.recipe-card {
+  min-width: 190px;
+  max-width: 210px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+/* Image carrée dans la carte */
+.recipe-card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;       /* carré */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.recipe-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* remplit le carré sans déformer */
+  display: block;
+}
+
+.card-body h3,
+.recipe-card h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.card-body .desc,
+.recipe-card p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* Bouton "Voir la recette" avec hover */
+.recipe-btn {
+  border: none;
+  background: #22c55e;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.15s ease-out,
+              transform 0.15s ease-out,
+              box-shadow 0.15s ease-out;
+}
+
+.recipe-btn:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
+.recipe-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+/* Utilitaire pour cacher la scrollbar verticale si besoin */
+.no-scrollbar {
+  overflow-y: scroll;          /* on garde le scroll */
+  -ms-overflow-style: none;    /* IE / Edge */
+  scrollbar-width: none;       /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari, Opera */
+}
+.clear-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+.clear-btn:hover {
+  background: #ffffff;
+  color: #059669;
 }

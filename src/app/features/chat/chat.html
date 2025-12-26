@@ -2,11 +2,21 @@
 <div class="chat-page">
   <!-- Header vert -->
   <header class="chat-header">
-    <div class="coach-icon">🏪</div>
+
+    <div class="coach-icon-wrapper">
+    <img src="http://localhost:3000/api/images/chatbot1.png" alt="NutriCoach" class="coach-icon" />
+    </div>
     <div class="coach-text">
       <div class="coach-title">Coach IA</div>
       <div class="coach-sub">Toujours disponible pour toi</div>
     </div>
+      <button
+      type="button"
+      class="clear-btn"
+      (click)="clearChat()"
+    >
+      Effacer la conversation
+    </button>
   </header>
 
   <!-- Zone messages (scrollable) -->
@@ -19,15 +29,59 @@
         [class.msg-user]="msg.from === 'user'"
       >
         <div class="bubble">
-          <p class="bubble-text">{{ msg.text }}</p>
+          <p class="bubble-text" *ngIf="msg.text">{{ msg.text }}</p>
           <span class="bubble-time">{{ msg.time }}</span>
+
+          <!-- Cartes recette IA -->
+          <div *ngIf="msg.recipes?.length" class="recipes-row">
+            <div
+              class="recipe-card"
+              *ngFor="let r of msg.recipes"
+            >
+              <div class="recipe-card-image">
+                <img
+                  *ngIf="r.imageUrl"
+                  [src]="r.imageUrl"
+                  [alt]="r.title"
+                  (error)="onRecipeImageError($event)"
+                />
+              </div>
+
+              <div class="card-body">
+                <h3>{{ r.title }}</h3>
+                <p class="desc">
+                  {{ r.category }} - {{ r.area }}
+                </p>
+
+                <div class="meta">
+                  <span *ngIf="r.calories" class="pill">
+                    {{ r.calories }} kcal
+                  </span>
+                  <span *ngIf="r.readyInMinutes" class="pill">
+                    {{ r.readyInMinutes }} min
+                  </span>
+                  <span *ngIf="r.difficulty" class="pill">
+                    {{ r.difficulty }}
+                  </span>
+                </div>
+
+                <button
+                  class="recipe-btn"
+                  type="button"
+                  (click)="openRecipe(r)"
+                >
+                  Voir la recette →
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Suggestions -->
     <div class="suggestions">
-      <div class="suggestions-title">Suggestions:</div>
+      <div class="suggestions-title">Suggestions :</div>
       <div class="suggestions-list">
         <button
           type="button"
