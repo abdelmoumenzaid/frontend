@@ -50,7 +50,14 @@ export class ChatService {
         history, // ou supprime si tu ne l’utilises pas encore côté Java
     });
     }
-
+  // analyse d’images (upload)
+    analyzeImages(formData: FormData): Observable<ChatRecipeResponse> {
+    return this.http.post<ChatRecipeResponse>(
+      `${this.baseUrl}/chat/images`,
+      formData,
+      { headers: { 'Accept': 'application/json' } } // Pas de Content-Type pour FormData
+    );
+  }
 
   // chat « recettes »
   sendRecipePrompt(prompt: string, sessionId: string): Observable<ChatRecipeResponse> {

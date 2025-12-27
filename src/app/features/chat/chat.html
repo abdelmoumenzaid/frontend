@@ -103,24 +103,50 @@
 
   <!-- Barre de saisie FIXE en bas -->
   <footer class="chat-input-bar">
-    <div class="input-wrapper">
-      <input
-        type="text"
-        [(ngModel)]="input"
-        placeholder="Écris ton message..."
-        (keyup)="onKeyUp($event)"
+  <div class="input-wrapper">
+    <!-- Input texte (optionnel) -->
+    <input
+      type="text"
+      [(ngModel)]="input"
+      placeholder="Écris un message... (optionnel)"
+      (keyup)="onKeyUp($event)"
+      class="text-input"
+    />
+    
+    <!-- Bouton photo (remplace 📨) -->
+    <label for="imageUpload" class="image-btn">
+      📷
+    </label>
+    <input
+      #imageUpload
+      id="imageUpload"
+      type="file"
+      accept="image/*"
+      capture="environment"
+      multiple
+      (change)="onImageSelected($event)"
+      style="display: none;"
+    />
+    
+    <!-- Aperçu images sélectionnées -->
+    <div *ngIf="selectedImages.length" class="images-preview">
+      <img 
+        *ngFor="let img of selectedImages; let i = index"
+        [src]="img"
+        class="preview-thumb"
+        (click)="removeImage(i)"
       />
-      <button type="button" class="icon-btn">
-        🎙️
-      </button>
-      <button
-        type="button"
-        class="send-btn"
-        [disabled]="!input.trim() || loading"
-        (click)="send()"
-      >
-        📨
-      </button>
     </div>
-  </footer>
+    
+    <!-- Bouton analyser (activé avec images) -->
+    <button
+      class="analyze-btn"
+      [disabled]="!selectedImages.length || loading"
+      (click)="analyzeImages()"
+    >
+      {{ loading ? '🔍 Analyse...' : 'Générer recettes' }}
+    </button>
+  </div>
+</footer>
+
 </div>

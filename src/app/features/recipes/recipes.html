@@ -100,10 +100,11 @@
   <!-- Grille de recettes -->
   <div class="recipes-grid">
     <div
-      class="recipe-card"
-      *ngFor="let recipe of recipes"
-      (click)="openRecipe(recipe)"
-    >
+    class="recipe-card"
+    *ngFor="let recipe of recipes | slice:0:visibleCount"
+    (click)="openRecipe(recipe)"
+  >
+  
       <!-- 🔥 Badge AI -->
       <div *ngIf="recipe.source === 'AI'" class="ai-badge">🔥 AI</div>
       

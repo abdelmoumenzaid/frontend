@@ -67,7 +67,7 @@ export class ProfileComponent {
         this.router.navigate(['/profil/personal-info']);
         break;
       case 'goal':
-        // plus tard: /profil/goal
+        this.router.navigate(['/profil/objectif']);
         console.log('Ouvrir objectif');
         break;
       case 'diet':

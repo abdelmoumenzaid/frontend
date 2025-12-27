@@ -10,6 +10,7 @@ import { DayTrackingComponent} from './features/day-tracking/day-tracking';
 import { AddMealComponent } from './features/day-tracking/add-meal/add-meal';
 import { AddWorkoutComponent } from './features/day-tracking/add-workout/add-workout';
 import { ProfilePersonalInfoComponent } from './features/profile/personal-info/personal-info';
+import { ObjectifComponent } from './features/profile/objectif/objectif';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   
   { path: 'profil', component: ProfileComponent },
   { path: 'profil/personal-info', component: ProfilePersonalInfoComponent },
+  { path: 'profil/objectif', component: ObjectifComponent },
 
   { path: 'calendar', component: DayTrackingComponent },
   { path: 'calendar/:date', component: DayTrackingComponent },

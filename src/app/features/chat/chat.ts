@@ -12,7 +12,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { marked } from 'marked';
 
-
 import {
   ChatService,
   ChatRecipeResponse,
@@ -49,6 +48,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
   loading = false;
   private sessionId = '';
 
+  // ✅ propriétés nécessaires pour les images
+  selectedImages: string[] = [];
+  imageFiles: File[] = [];
+
   constructor(
     private chatService: ChatService,
     private zone: NgZone,
@@ -56,22 +59,21 @@ export class ChatComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-  this.sessionId = this.getOrCreateSessionId();
-  this.restoreMessages();
+    this.sessionId = this.getOrCreateSessionId();
+    this.restoreMessages();
 
-  if (this.messages.length === 0) {
-    const text =
-      "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?";
-    this.messages.push({
-      from: 'bot',
-      text,
-      htmlText: marked.parse(text) as string,   // ← ajouté
-      time: this.nowTime(),
-    });
-    this.saveMessages();
+    if (this.messages.length === 0) {
+      const text =
+        "Bonjour ! Je suis ton coach nutrition IA. Comment puis-je t'aider aujourd'hui ?";
+      this.messages.push({
+        from: 'bot',
+        text,
+        htmlText: marked.parse(text) as string,
+        time: this.nowTime(),
+      });
+      this.saveMessages();
+    }
   }
-}
-
 
   ngAfterViewInit(): void {
     this.scrollToBottom();
@@ -150,7 +152,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }, 50);
   }
 
-  // ---- Envoi message ----
+  // ---- Envoi message texte ----
 
   send(): void {
     const text = this.input.trim();
@@ -173,42 +175,40 @@ export class ChatComponent implements OnInit, AfterViewInit {
       lower.includes('plats')
     ) {
       this.chatService.sendRecipePrompt(text, this.sessionId).subscribe({
-       next: (resp: ChatRecipeResponse) => {
-        this.zone.run(() => {
-          this.loading = false;
+        next: (resp: ChatRecipeResponse) => {
+          this.zone.run(() => {
+            this.loading = false;
 
-          const introText = resp.intro ?? '';
-          const htmlText = marked.parse(introText) as string;
+            const introText = resp.intro ?? '';
+            const htmlText = marked.parse(introText) as string;
 
-          this.messages.push({
-            from: 'bot',
-            text: introText,
-            htmlText,
-            time: this.nowTime(),
-            recipes:
-              resp.recipes && resp.recipes.length ? resp.recipes : undefined,
+            this.messages.push({
+              from: 'bot',
+              text: introText,
+              htmlText,
+              time: this.nowTime(),
+              recipes:
+                resp.recipes && resp.recipes.length ? resp.recipes : undefined,
+            });
+            this.saveMessages();
+            this.scrollToBottom();
           });
-          this.saveMessages();
-          this.scrollToBottom();
-        });
-      },
-
+        },
         error: () => {
           this.zone.run(() => {
             this.loading = false;
-            const text =
+            const textError =
               'Désolé, une erreur est survenue. Réessaie dans un instant ou reformule ta question.';
             this.messages.push({
               from: 'bot',
-              text,
-              htmlText: marked.parse(text) as string,
+              text: textError,
+              htmlText: marked.parse(textError) as string,
               time: this.nowTime(),
             });
             this.saveMessages();
             this.scrollToBottom();
           });
         },
-
       });
       return;
     }
@@ -218,23 +218,93 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     this.chatService.sendMessage(text, this.sessionId, history).subscribe({
       next: (resp) => {
-  this.zone.run(() => {
-    this.loading = false;
+        this.zone.run(() => {
+          this.loading = false;
 
-    const answerText = resp.answer ?? '';
-    const htmlText = marked.parse(answerText) as string;
+          const answerText = resp.answer ?? '';
+          const htmlText = marked.parse(answerText) as string;
 
-    this.messages.push({
-      from: 'bot',
-      text: answerText,
-      htmlText,
-      time: this.nowTime(),
+          this.messages.push({
+            from: 'bot',
+            text: answerText,
+            htmlText,
+            time: this.nowTime(),
+          });
+          this.saveMessages();
+          this.scrollToBottom();
+        });
+      },
+      error: () => {
+        this.zone.run(() => {
+          this.loading = false;
+        });
+      },
     });
-    this.saveMessages();
-    this.scrollToBottom();
-  });
-},
+  }
 
+  // ---- Gestion images ----
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.imageFiles = Array.from(input.files);
+      this.selectedImages = this.imageFiles.map((file: File) =>
+        URL.createObjectURL(file)
+      );
+    }
+  }
+
+  removeImage(index: number): void {
+    this.selectedImages.splice(index, 1);
+    this.imageFiles.splice(index, 1);
+  }
+
+  analyzeImages(): void {
+    if (!this.imageFiles.length || this.loading) return;
+
+    this.loading = true;
+    const formData = new FormData();
+
+    this.imageFiles.forEach((file: File) => {
+      formData.append('images', file);
+    });
+
+    if (this.input.trim()) {
+      formData.append('prompt', this.input.trim());
+    }
+
+    this.chatService.analyzeImages(formData).subscribe({
+      next: (resp: ChatRecipeResponse) => {
+        this.zone.run(() => {
+          this.loading = false;
+          this.messages.push({
+            from: 'bot',
+            text: `Recettes générées à partir de ${this.imageFiles.length} image(s) :`,
+            htmlText: marked.parse(
+              `Recettes générées à partir de **${this.imageFiles.length} image(s)** :`
+            ) as string,
+            time: this.nowTime(),
+            recipes: resp.recipes,
+          });
+          this.saveMessages();
+          this.scrollToBottom();
+
+          this.selectedImages = [];
+          this.imageFiles = [];
+          this.input = '';
+        });
+      },
+      error: () => {
+        this.zone.run(() => {
+          this.loading = false;
+          this.messages.push({
+            from: 'bot',
+            text: 'Erreur analyse image. Réessaie.',
+            time: this.nowTime(),
+          });
+          this.scrollToBottom();
+        });
+      },
     });
   }
 

@@ -172,3 +172,37 @@
   font-weight: 600;
   cursor: pointer;
 }
+.loading-container {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent; /* ou #f9fafb */
+  z-index: 1;
+}
+
+
+.circle-loader {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #e5e7eb;
+  border-top: 6px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite; /* rotation continue */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container p {
+  margin-top: 14px;
+  font-size: 14px;
+  color: #6b7280;
+}
