@@ -1,7 +1,9 @@
 // src/app/features/calendar/day-tracking.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { DayTrackingService } from './day-tracking.service';
+
 
 interface MealEntry {
   id: string;
@@ -17,6 +19,7 @@ interface MealEntry {
   servings: number;
 }
 
+
 interface ExerciseSet {
   id: string;
   exerciseName: string;
@@ -25,6 +28,7 @@ interface ExerciseSet {
   weightKg?: number;
   durationSec?: number;
 }
+
 
 interface WorkoutEntry {
   id: string;
@@ -35,6 +39,7 @@ interface WorkoutEntry {
   totalSets: number;
   sets: ExerciseSet[];
 }
+
 
 interface DayTracking {
   date: string; // ISO yyyy-MM-dd
@@ -47,13 +52,15 @@ interface DayTracking {
   workouts: WorkoutEntry[];
 }
 
+
 interface WeekRing {
-  date: string;          // yyyy-MM-dd
-  label: string;         // L, M, M, J, V, S, D
+  date: string; // yyyy-MM-dd
+  label: string; // L, M, M, J, V, S, D
   caloriesIn: number;
   caloriesTarget: number;
-  trained: boolean;      // entraînement fait ou pas
+  trained: boolean; // entraînement fait ou pas
 }
+
 
 @Component({
   selector: 'app-day-tracking',
@@ -62,19 +69,31 @@ interface WeekRing {
   templateUrl: './day-tracking.html',
   styleUrl: './day-tracking.css',
 })
-export class DayTrackingComponent {
-  day!: DayTracking;
+export class DayTrackingComponent implements OnInit {
+  day: DayTracking | null = null;
   displayDate = '';
-
   weekRings: WeekRing[] = [];
+  loading = true;
+  error: string | null = null;
+  currentDate: Date = new Date();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private trackingService: DayTrackingService
+  ) {}
+
 
   ngOnInit(): void {
+    // ✅ ÉCOUTE LES CHANGEMENTS DE PARAMÈTRES (pas seulement à l'init)
     this.route.paramMap.subscribe(params => {
       const paramDate = params.get('date');
       const today = new Date();
       const date = paramDate ? new Date(paramDate) : today;
+
+      // ✅ IMPORTANT : Mémoriser la date
+      this.currentDate = date;
 
       this.displayDate = date.toLocaleDateString('fr-FR', {
         weekday: 'long',
@@ -83,16 +102,49 @@ export class DayTrackingComponent {
         year: 'numeric',
       });
 
-      this.day = this.buildMockDay(date);
+      // ✅ RECHARGER LES DONNÉES À CHAQUE CHANGEMENT DE DATE
+      this.loadDayTracking(date);
+      
+      // ✅ RECHARGER LES RINGS
       this.buildWeekRings(date);
     });
   }
+
+
+  // ✅ NOUVELLE MÉTHODE : CHARGER LES DONNÉES DU JOUR
+  private loadDayTracking(date: Date): void {
+    this.loading = true;
+    this.error = null;
+
+    this.trackingService.getDayTracking(date).subscribe({
+      next: (data) => {
+        this.day = data;
+        this.loading = false;
+        console.log('✅ Day data loaded:', this.day);
+      },
+      error: (err) => {
+        console.error('❌ Error loading day:', err);
+        this.day = null;
+        this.error = 'Impossible de charger les données du jour';
+        this.loading = false;
+      },
+    });
+  }
+
+
   onAddMeal(): void {
-  this.router.navigate(['/calendar', this.day.date, 'add-meal']);
-}
+    if (this.day) {
+      this.router.navigate(['/calendar', this.day.date, 'add-meal']);
+    }
+  }
+
+
   onAddWorkout(): void {
-  this.router.navigate(['/calendar', this.day.date, 'add-workout']);
-}
+    if (this.day) {
+      this.router.navigate(['/calendar', this.day.date, 'add-workout']);
+    }
+  }
+
 
   getRingRotation(r: WeekRing): number {
     if (!r.caloriesTarget || r.caloriesTarget <= 0) return 0;
@@ -100,17 +152,20 @@ export class DayTrackingComponent {
     return ratio * 360;
   }
 
+
   getRingEmoji(r: WeekRing): string {
     return r.trained ? '💪' : '😴';
   }
 
+
   getRingColor(r: WeekRing): string {
     const ratio = r.caloriesIn / r.caloriesTarget;
-    if (ratio === 0) return '#9ca3af';             // gris : pas de données
+    if (ratio === 0) return '#9ca3af'; // gris : pas de données
     if (ratio >= 0.9 && ratio <= 1.1) return '#22c55e'; // vert : ok
-    if (ratio < 0.9) return '#3b82f6';             // bleu : en dessous
-    return '#ef4444';                              // rouge : au-dessus
+    if (ratio < 0.9) return '#3b82f6'; // bleu : en dessous
+    return '#ef4444'; // rouge : au-dessus
   }
+
 
   goToToday(): void {
     const today = new Date();
@@ -118,16 +173,47 @@ export class DayTrackingComponent {
     this.router.navigate(['/calendar', iso]);
   }
 
+
   goToOffset(days: number): void {
+    if (!this.day) return;
     const base = new Date(this.day.date);
     base.setDate(base.getDate() + days);
     const iso = base.toISOString().substring(0, 10);
     this.router.navigate(['/calendar', iso]);
   }
 
+
   goToDate(iso: string): void {
     this.router.navigate(['/calendar', iso]);
   }
+
+  // ✅ Méthodes pour éditer/supprimer repas
+onEditMeal(meal: MealEntry): void {
+  if (this.day) {
+    this.router.navigate(['/calendar', this.day.date, 'add-meal', meal.id]);  // ✅ add-meal/:mealId
+  }
+}
+
+
+onDeleteMeal(mealId: string): void {
+  if (confirm('Supprimer ce repas ?')) {
+    this.trackingService.deleteMeal(this.day!.date, mealId).subscribe({
+      next: () => {
+        console.log('✅ Repas supprimé');
+        this.loadDayTracking(this.currentDate); // Recharge
+      },
+      error: (err) => {
+        console.error('❌ Erreur suppression:', err);
+        this.error = 'Erreur suppression repas';
+      }
+    });
+  }
+}
+
+trackByMealId(index: number, meal: MealEntry): string {
+  return meal.id;
+}
+
 
   private buildWeekRings(centerDate: Date): void {
     // 0 = lundi
@@ -143,99 +229,33 @@ export class DayTrackingComponent {
       current.setDate(d.getDate() + i);
       const iso = current.toISOString().substring(0, 10);
 
-      // TODO: remplacer par appel backend /summary semaine
-      const mock = this.buildMockDay(current);
-      const trained = mock.totalWorkoutMinutes > 0;
-
-      rings.push({
-        date: iso,
-        label: labels[i],
-        caloriesIn: mock.caloriesIn,
-        caloriesTarget: mock.caloriesTarget,
-        trained,
+      // ✅ APPEL BACKEND POUR CHAQUE JOUR DE LA SEMAINE
+      this.trackingService.getDayTracking(current).subscribe({
+        next: (data: DayTracking) => {
+          const trained = data.totalWorkoutMinutes > 0;
+          const ring: WeekRing = {
+            date: iso,
+            label: labels[i],
+            caloriesIn: data.caloriesIn,
+            caloriesTarget: data.caloriesTarget,
+            trained,
+          };
+          rings[i] = ring;
+          this.weekRings = [...rings];
+        },
+        error: (err: any) => {
+          // Jour sans données = ring gris vide
+          const ring: WeekRing = {
+            date: iso,
+            label: labels[i],
+            caloriesIn: 0,
+            caloriesTarget: 0,
+            trained: false,
+          };
+          rings[i] = ring;
+          this.weekRings = [...rings];
+        },
       });
     }
-
-    this.weekRings = rings;
-  }
-
-  private buildMockDay(date: Date): DayTracking {
-    const iso = date.toISOString().substring(0, 10);
-
-    const meals: MealEntry[] = [
-      {
-        id: 'm1',
-        type: 'BREAKFAST',
-        label: 'Petit-déjeuner',
-        time: '08:10',
-        recipeName: 'Msemen au miel',
-        imageUrl: 'http://localhost:3000/api/images/recipes/msemen-miel.jpg',
-        calories: 480,
-        protein: 12,
-        carbs: 70,
-        fat: 15,
-        servings: 1,
-      },
-      {
-        id: 'm2',
-        type: 'LUNCH',
-        label: 'Déjeuner',
-        time: '13:05',
-        recipeName: 'Tajine poulet & olives',
-        imageUrl:
-          'http://localhost:3000/api/images/recipes/tajine-poulet-olives.jpg',
-        calories: 650,
-        protein: 40,
-        carbs: 55,
-        fat: 22,
-        servings: 1,
-      },
-    ];
-
-    const workout: WorkoutEntry = {
-      id: 'w1',
-      name: 'Full body force',
-      time: '18:30',
-      durationMin: 45,
-      caloriesBurned: 320,
-      totalSets: 6,
-      sets: [
-        {
-          id: 's1',
-          exerciseName: 'Squat',
-          setNumber: 1,
-          reps: 8,
-          weightKg: 60,
-        },
-        {
-          id: 's2',
-          exerciseName: 'Squat',
-          setNumber: 2,
-          reps: 8,
-          weightKg: 60,
-        },
-        {
-          id: 's3',
-          exerciseName: 'Développé couché',
-          setNumber: 1,
-          reps: 8,
-          weightKg: 50,
-        },
-      ],
-    };
-
-    const caloriesIn = meals.reduce((sum, m) => sum + m.calories, 0);
-    const caloriesOut = workout.caloriesBurned ?? 0;
-
-    return {
-      date: iso,
-      caloriesIn,
-      caloriesTarget: 2100,
-      caloriesOut,
-      totalWorkoutMinutes: workout.durationMin,
-      totalSets: workout.totalSets,
-      meals,
-      workouts: [workout],
-    };
   }
 }

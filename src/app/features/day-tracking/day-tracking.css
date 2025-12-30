@@ -79,12 +79,6 @@
   padding: 24px 16px 40px;
 }
 
-.tracking-page {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 24px 16px 40px;
-}
-
 /* Header */
 .tracking-header {
   display: flex;
@@ -320,4 +314,45 @@
   font-size: 14px;
   color: #9ca3af;
   font-style: italic;
+}
+/* ✅ Styles pour repas cliquables */
+.meal-item {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.meal-card {
+  width: 100%;
+  background: white;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.meal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.meal-item:hover .delete-btn {
+  opacity: 1;
 }

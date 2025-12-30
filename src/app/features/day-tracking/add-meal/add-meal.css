@@ -97,3 +97,27 @@ select:focus {
   color: #374151;
   border-color: #e5e7eb;
 }
+.error-message {
+  margin: 20px;
+  padding: 15px;
+  background-color: #fee;
+  border: 1px solid #f44;
+  border-radius: 8px;
+  color: #c00;
+  font-weight: 500;
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled,
+input:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #6b7280;
+}

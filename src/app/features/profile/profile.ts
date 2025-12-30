@@ -71,11 +71,11 @@ export class ProfileComponent {
         console.log('Ouvrir objectif');
         break;
       case 'diet':
-        // plus tard: /profil/diet
+        this.router.navigate(['/profil/allergie']);
         console.log('Ouvrir restrictions alimentaires');
         break;
       case 'language':
-        // plus tard: /profil/language
+        this.router.navigate(['/profil/langue']);
         console.log('Ouvrir langue');
         break;
       default:

@@ -1,23 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DayTrackingComponent } from './day-tracking';
 
-import { DayTracking } from './day-tracking';
+describe('DayTrackingComponent', () => {
+    let component: DayTrackingComponent;
+    let fixture: ComponentFixture<DayTrackingComponent>;
 
-describe('DayTracking', () => {
-  let component: DayTracking;
-  let fixture: ComponentFixture<DayTracking>;
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [DayTrackingComponent]
+        })
+        .compileComponents();
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [DayTracking]
-    })
-    .compileComponents();
+        fixture = TestBed.createComponent(DayTrackingComponent);
+        component = fixture.componentInstance;
+        await fixture.whenStable();
+    });
 
-    fixture = TestBed.createComponent(DayTracking);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

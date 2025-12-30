@@ -11,6 +11,8 @@ import { AddMealComponent } from './features/day-tracking/add-meal/add-meal';
 import { AddWorkoutComponent } from './features/day-tracking/add-workout/add-workout';
 import { ProfilePersonalInfoComponent } from './features/profile/personal-info/personal-info';
 import { ObjectifComponent } from './features/profile/objectif/objectif';
+import { LanguageComponent } from './features/profile/language/language';
+import { AllergieComponent } from './features/profile/allergie/allergie';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -27,11 +29,14 @@ export const routes: Routes = [
   { path: 'profil', component: ProfileComponent },
   { path: 'profil/personal-info', component: ProfilePersonalInfoComponent },
   { path: 'profil/objectif', component: ObjectifComponent },
+  { path: 'profil/langue', component: LanguageComponent },
+  { path: 'profil/allergie', component: AllergieComponent },
 
   { path: 'calendar', component: DayTrackingComponent },
   { path: 'calendar/:date', component: DayTrackingComponent },
   { path: 'calendar/:date/add-meal', component: AddMealComponent },
   { path: 'calendar/:date/add-workout', component: AddWorkoutComponent },
+  { path: 'calendar/:date/add-meal/:mealId', component: AddMealComponent },  // ✅ AJOUTÉ : même composant !
 
   { path: '**', redirectTo: 'dashboard' }
 ];

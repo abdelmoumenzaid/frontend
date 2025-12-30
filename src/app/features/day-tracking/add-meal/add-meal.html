@@ -2,17 +2,28 @@
   <header class="add-meal-header">
     <button class="back-link" (click)="onCancel()">‹ Retour</button>
     <div class="title-block">
-      <h1>Ajouter un repas</h1>
+      <!-- ✅ TITRE DYNAMIQUE : Ajouter OU Modifier -->
+      <h1>{{ mealId ? 'Modifier le repas' : 'Ajouter un repas' }}</h1>
       <p class="subtitle">
-        {{ date | date : 'EEEE d MMMM y' : undefined : 'fr-FR' }}
+        {{ date | date : 'EEEE d MMMM y' }}
       </p>
     </div>
   </header>
 
-  <form class="form" (ngSubmit)="onSave()">
+  <!-- ✅ AFFICHER LES ERREURS -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- ✅ LOADING SPINNER -->
+  <div *ngIf="loading" class="loading-overlay">
+    <p>Chargement{{ mealId ? ' du repas...' : '...' }}</p>
+  </div>
+
+  <form class="form" (ngSubmit)="onSave()" [formGroup]="form" *ngIf="!loading">
     <div class="field">
       <label>Type de repas</label>
-      <select [(ngModel)]="type" name="type">
+      <select [(ngModel)]="type" name="type" [disabled]="loading">
         <option value="BREAKFAST">Petit-déjeuner</option>
         <option value="LUNCH">Déjeuner</option>
         <option value="DINNER">Dîner</option>
@@ -22,7 +33,12 @@
 
     <div class="field">
       <label>Heure</label>
-      <input type="time" [(ngModel)]="time" name="time" />
+      <input
+        type="time"
+        [(ngModel)]="time"
+        name="time"
+        [disabled]="loading"
+      />
     </div>
 
     <div class="field">
@@ -32,6 +48,7 @@
         [(ngModel)]="recipeName"
         name="recipeName"
         placeholder="Ex: Tajine poulet & olives"
+        [disabled]="loading"
       />
     </div>
 
@@ -43,6 +60,7 @@
           [(ngModel)]="calories"
           name="calories"
           min="0"
+          [disabled]="loading"
         />
       </div>
       <div class="field">
@@ -53,6 +71,7 @@
           name="servings"
           min="0.1"
           step="0.1"
+          [disabled]="loading"
         />
       </div>
     </div>
@@ -60,24 +79,51 @@
     <div class="field-inline">
       <div class="field">
         <label>Protéines (g)</label>
-        <input type="number" [(ngModel)]="protein" name="protein" min="0" />
+        <input
+          type="number"
+          [(ngModel)]="protein"
+          name="protein"
+          min="0"
+          [disabled]="loading"
+        />
       </div>
       <div class="field">
         <label>Glucides (g)</label>
-        <input type="number" [(ngModel)]="carbs" name="carbs" min="0" />
+        <input
+          type="number"
+          [(ngModel)]="carbs"
+          name="carbs"
+          min="0"
+          [disabled]="loading"
+        />
       </div>
       <div class="field">
         <label>Lipides (g)</label>
-        <input type="number" [(ngModel)]="fat" name="fat" min="0" />
+        <input
+          type="number"
+          [(ngModel)]="fat"
+          name="fat"
+          min="0"
+          [disabled]="loading"
+        />
       </div>
     </div>
 
     <div class="actions">
-      <button type="button" class="btn-secondary" (click)="onCancel()">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="onCancel()"
+        [disabled]="loading"
+      >
         Annuler
       </button>
-      <button type="submit" class="btn-primary">
-        Enregistrer le repas
+      <!-- ✅ BOUTON DYNAMIQUE : Modifier OU Ajouter -->
+      <button 
+        type="submit" 
+        class="btn-primary" 
+        [disabled]="loading || !recipeName?.trim()">
+        {{ loading ? (mealId ? 'Modification...' : 'Enregistrement...') : (mealId ? 'Modifier le repas' : 'Enregistrer le repas') }}
       </button>
     </div>
   </form>

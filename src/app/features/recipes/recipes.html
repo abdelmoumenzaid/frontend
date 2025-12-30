@@ -33,20 +33,7 @@
     >
       Tout
     </button>
-    <!-- <button
-      class="chip"
-      [class.active]="activeFilter === 'lunch'"
-      (click)="setFilter('lunch')"
-    >
-      Déjeuner
-    </button>
-    <button
-      class="chip"
-      [class.active]="activeFilter === 'dinner'"
-      (click)="setFilter('dinner')"
-    >
-      Dîner
-    </button> -->
+
     <button
       class="chip"
       [class.active]="activeFilter === 'snack'"
@@ -84,30 +71,23 @@
     </div>
   </div>
 
-  <!-- Compteur + Loading -->
+  <!-- Compteur -->
   <div class="status">
     <p class="count" *ngIf="!loading && !aiLoading">
       {{ recipes.length }} recettes trouvées
     </p>
-    <!-- <div *ngIf="loading" class="loading">
-      <span>Chargement des recettes...</span>
-    </div>
-    <div *ngIf="aiLoading" class="loading ai-loading">
-      <span>🔥 Génération AI en cours...</span>
-    </div> -->
   </div>
 
-  <!-- Grille de recettes -->
+  <!-- Grille de recettes (limitée à visibleCount) -->
   <div class="recipes-grid">
     <div
-    class="recipe-card"
-    *ngFor="let recipe of recipes | slice:0:visibleCount"
-    (click)="openRecipe(recipe)"
-  >
-  
+      class="recipe-card"
+      *ngFor="let recipe of recipes | slice: 0: visibleCount"
+      (click)="openRecipe(recipe)"
+    >
       <!-- 🔥 Badge AI -->
       <div *ngIf="recipe.source === 'AI'" class="ai-badge">🔥 AI</div>
-      
+
       <img
         [src]="recipe.image"
         [alt]="recipe.name"
@@ -116,7 +96,7 @@
       />
       <div class="card-body">
         <h3>{{ recipe.name }}</h3>
-        <p class="desc">{{ recipe.description | slice:0:100 }}...</p>
+        <p class="desc">{{ recipe.description | slice: 0: 100 }}...</p>
         <div class="meta">
           <span class="pill">{{ recipe.calories }} kcal</span>
           <span class="pill">{{ recipe.time }} min</span>
@@ -130,5 +110,12 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Bouton Afficher plus -->
+  <div class="show-more-container" *ngIf="recipes.length > visibleCount">
+    <button class="show-more-btn" (click)="showMore()">
+      Afficher plus de recettes →
+    </button>
   </div>
 </div>
