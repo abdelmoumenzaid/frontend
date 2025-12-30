@@ -2,7 +2,7 @@
   <header class="add-meal-header">
     <button class="back-link" (click)="onCancel()">‹ Retour</button>
     <div class="title-block">
-      <!-- ✅ TITRE DYNAMIQUE : Ajouter OU Modifier -->
+      <!-- ✅ TITRE DYNAMIQUE -->
       <h1>{{ mealId ? 'Modifier le repas' : 'Ajouter un repas' }}</h1>
       <p class="subtitle">
         {{ date | date : 'EEEE d MMMM y' }}
@@ -10,20 +10,21 @@
     </div>
   </header>
 
-  <!-- ✅ AFFICHER LES ERREURS -->
+  <!-- ✅ ERREURS -->
   <div *ngIf="error" class="error-message">
     {{ error }}
   </div>
 
-  <!-- ✅ LOADING SPINNER -->
+  <!-- ✅ LOADING -->
   <div *ngIf="loading" class="loading-overlay">
-    <p>Chargement{{ mealId ? ' du repas...' : '...' }}</p>
+    <p>{{ mealId ? 'Chargement du repas...' : 'Enregistrement...' }}</p>
   </div>
 
-  <form class="form" (ngSubmit)="onSave()" [formGroup]="form" *ngIf="!loading">
+  <!-- ✅ FORMULAIRE SANS formGroup -->
+  <form class="form" (ngSubmit)="onSave()" *ngIf="!loading">
     <div class="field">
       <label>Type de repas</label>
-      <select [(ngModel)]="type" name="type" [disabled]="loading">
+      <select [(ngModel)]="type" name="type" required>
         <option value="BREAKFAST">Petit-déjeuner</option>
         <option value="LUNCH">Déjeuner</option>
         <option value="DINNER">Dîner</option>
@@ -37,7 +38,7 @@
         type="time"
         [(ngModel)]="time"
         name="time"
-        [disabled]="loading"
+        required
       />
     </div>
 
@@ -48,7 +49,7 @@
         [(ngModel)]="recipeName"
         name="recipeName"
         placeholder="Ex: Tajine poulet & olives"
-        [disabled]="loading"
+        required
       />
     </div>
 
@@ -60,7 +61,7 @@
           [(ngModel)]="calories"
           name="calories"
           min="0"
-          [disabled]="loading"
+          required
         />
       </div>
       <div class="field">
@@ -71,7 +72,6 @@
           name="servings"
           min="0.1"
           step="0.1"
-          [disabled]="loading"
         />
       </div>
     </div>
@@ -84,7 +84,6 @@
           [(ngModel)]="protein"
           name="protein"
           min="0"
-          [disabled]="loading"
         />
       </div>
       <div class="field">
@@ -94,7 +93,6 @@
           [(ngModel)]="carbs"
           name="carbs"
           min="0"
-          [disabled]="loading"
         />
       </div>
       <div class="field">
@@ -104,7 +102,6 @@
           [(ngModel)]="fat"
           name="fat"
           min="0"
-          [disabled]="loading"
         />
       </div>
     </div>
@@ -114,15 +111,14 @@
         type="button"
         class="btn-secondary"
         (click)="onCancel()"
-        [disabled]="loading"
       >
         Annuler
       </button>
-      <!-- ✅ BOUTON DYNAMIQUE : Modifier OU Ajouter -->
+      <!-- ✅ BOUTON DYNAMIQUE SANS ?.trim() -->
       <button 
         type="submit" 
         class="btn-primary" 
-        [disabled]="loading || !recipeName?.trim()">
+        [disabled]="loading || !recipeName || !recipeName.trim()">
         {{ loading ? (mealId ? 'Modification...' : 'Enregistrement...') : (mealId ? 'Modifier le repas' : 'Enregistrer le repas') }}
       </button>
     </div>
