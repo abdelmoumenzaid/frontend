@@ -1,4 +1,4 @@
-<div class="recipe-detail" *ngIf="recipe; else loadingTemplate">
+<div class="recipe-detail" *ngIf="!loading && recipe; else loadingTemplate">
   <div class="hero">
     <button class="back-btn" (click)="goBack()">←</button>
     <img [src]="recipe.image" [alt]="recipe.name" />
@@ -14,7 +14,7 @@
       <span class="pill">{{ recipe.difficulty }}</span>
     </div>
 
-    <div class="section">
+    <div class="section" *ngIf="recipe.ingredients?.length">
       <h2>Ingrédients</h2>
       <div class="ingredients">
         <div *ngFor="let ing of recipe.ingredients" class="ingredient-row">
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="section" *ngIf="recipe.steps?.length">
       <h2>Préparation</h2>
       <ul class="steps">
         <li *ngFor="let step of recipe.steps; let i = index">
@@ -66,8 +66,7 @@
 
 <ng-template #loadingTemplate>
   <div class="loading-container" id="loader">
-  <div class="circle-loader"></div>
+    <div class="circle-loader"></div>
     <p>🍽️ Recette en préparation…</p>
   </div>
-
 </ng-template>
