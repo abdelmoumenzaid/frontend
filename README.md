@@ -57,3 +57,10 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+Pour les futures mises à jour
+
+cd C:\Users\ZAID\Desktop\app-diet\front-diet\frontend
+ng build --configuration production --base-href=/frontend/
+npx angular-cli-ghpages --no-silent --dir=dist/frontend
