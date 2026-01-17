@@ -225,3 +225,69 @@ h1 {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(14, 152, 89, 0.4);
 }
+/* 🚀 BOUTON GÉNÉRER AI - MOBILE "🤖 IA" */
+@media (max-width: 480px) {
+  .ai-btn {
+    position: relative !important;
+  }
+
+  /* ❌ CACHE TOUT le texte original */
+  .ai-btn span,
+  .ai-btn {
+    font-size: 0 !important;
+  }
+
+  /* ✅ "🤖 IA" SEUL */
+  .ai-btn::after {
+    content: "🤖" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    color: white !important;
+    z-index: 1000 !important;
+  }
+}
+/* 🚀 MOBILE 3x3 + DÉTAILS HORIZONTAUX */
+@media (max-width: 480px) {
+  .recipes-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .recipe-card {
+    margin-bottom: 8px !important;
+  }
+
+  .card-image {
+    height: 120px !important;
+  }
+
+  .card-body h3 {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  .card-body {
+    padding: 8px !important;
+  }
+
+  /* ✅ DÉTAILS CÔTE À CÔTE */
+  .meta {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 2px !important;
+    margin-top: 4px !important;
+  }
+
+  .pill {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+    flex: 1 !important;
+  }
+}

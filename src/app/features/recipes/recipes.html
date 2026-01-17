@@ -43,13 +43,21 @@
     </button>
 
     <!-- 🔥 Generated AI -->
-    <button
+    <!-- <button
       class="chip ai-chip"
       [class.active]="selectedCategory === 'Generated AI'"
       (click)="applyCategoryFilter('Generated AI')"
     >
       🔥 Generated AI
-    </button>
+    </button> -->
+      <button
+  class="chip ai-chip"
+  [class.active]="selectedCategory === 'Generated AI'"
+  (click)="applyCategoryFilter('Generated AI')"
+>
+  <span class="ai-desktop">🔥 Generated AI</span>
+  <span class="ai-mobile">🤖 IA</span>
+</button>
 
     <button class="chip more" (click)="toggleMoreFilters()">
       Plus de filtres ▾

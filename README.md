@@ -64,3 +64,12 @@ Pour les futures mises à jour
 cd C:\Users\ZAID\Desktop\app-diet\front-diet\frontend
 ng build --configuration production --base-href=/frontend/
 npx angular-cli-ghpages --no-silent --dir=dist/frontend
+
+
+REM 1. Build production
+ng build --configuration production --base-href=/frontend/
+
+REM 2. Deploy GitHub Pages
+npx angular-cli-ghpages --no-silent --dir=dist/frontend/browser
+
+REM 3. Attends 5-10 min
