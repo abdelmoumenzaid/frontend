@@ -20,6 +20,13 @@
     <a routerLink="/chat" routerLinkActive="active" (click)="closeMenu()">🤖Chat</a>
     <a routerLink="/calendar" routerLinkActive="active" (click)="closeMenu()">📅Agenda</a>
     <a routerLink="/profil" routerLinkActive="active" (click)="closeMenu()">👤Profil</a>
+
+    <!-- ✅ LOGOUT BOUTON -->
+    <button *ngIf="isAuthenticated" class="logout-btn" (click)="logout()">
+      🚪 Déconnexion
+    </button>
+
+
   </nav>
 </header>
 

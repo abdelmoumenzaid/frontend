@@ -19,14 +19,27 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              },
-              "src/404.html",
-              "src/favicon.ico"
-            ],
+            
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "public",
+              "output": "/"
+            },
+            {
+              "glob": "**/*",
+              "input": "src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "src/assets/keycloak-theme",
+              "output": "keycloak-theme"
+            },
+            "src/404.html",
+            "src/favicon.ico"
+          ],
+
             "styles": [
               "src/styles.css"
             ],

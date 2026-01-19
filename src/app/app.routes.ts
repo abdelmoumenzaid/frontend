@@ -13,55 +13,111 @@ import { ProfilePersonalInfoComponent } from './features/profile/personal-info/p
 import { ObjectifComponent } from './features/profile/objectif/objectif';
 import { LanguageComponent } from './features/profile/language/language';
 import { AllergieComponent } from './features/profile/allergie/allergie';
+import { CallbackComponent } from './callback.component';
+import { AuthLandingComponent } from './features/auth-landing/auth-landing';
+import { AuthRegisterComponent } from './features/auth-register/auth-register';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  // ✅ Une seule redirection root
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  // 🟢 PUBLIQUES (pas de guard)
+  { path: '', redirectTo: '/auth-landing', pathMatch: 'full' },
+  { path: 'auth-landing', component: AuthLandingComponent },
+  { path: 'auth-register', component: AuthRegisterComponent },
+  
+  // 🔥 Callback Keycloak (public)
+  { path: 'callback', component: CallbackComponent },
 
-  // 🟢 Routes statiques (prerender OK)
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'recipes', component: RecipesComponent },
-  { path: 'entrainement', component: EntrainementComponent },
-  { path: 'photo-recipe', component: PhotoRecipeComponent },
-  { path: 'chat', component: ChatComponent },
+  // 🔐 PROTÉGÉES (avec authGuard)
+  { 
+    path: 'dashboard', 
+    component: DashboardComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'recipes', 
+    component: RecipesComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'entrainement', 
+    component: EntrainementComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'photo-recipe', 
+    component: PhotoRecipeComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'chat', 
+    component: ChatComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'profil', 
+    component: ProfileComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'profil/personal-info', 
+    component: ProfilePersonalInfoComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'profil/objectif', 
+    component: ObjectifComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'profil/langue', 
+    component: LanguageComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'profil/allergie', 
+    component: AllergieComponent,
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'calendar', 
+    component: DayTrackingComponent,
+    canActivate: [authGuard]
+  },
 
-  { path: 'profil', component: ProfileComponent },
-  { path: 'profil/personal-info', component: ProfilePersonalInfoComponent },
-  { path: 'profil/objectif', component: ObjectifComponent },
-  { path: 'profil/langue', component: LanguageComponent },
-  { path: 'profil/allergie', component: AllergieComponent },
-
-  { path: 'calendar', component: DayTrackingComponent },
-
-  // 🔵 Routes dynamiques → CLIENT ONLY (IMPORTANT)
+  // 🔵 DYNAMIQUES protégées
   {
     path: 'recipes/:id',
     component: RecipeDetailComponent,
+    canActivate: [authGuard],
     data: { renderMode: 'client' }
   },
   {
     path: 'calendar/:date',
     component: DayTrackingComponent,
+    canActivate: [authGuard],
     data: { renderMode: 'client' }
   },
   {
     path: 'calendar/:date/add-meal',
     component: AddMealComponent,
+    canActivate: [authGuard],
     data: { renderMode: 'client' }
   },
   {
     path: 'calendar/:date/add-workout',
     component: AddWorkoutComponent,
+    canActivate: [authGuard],
     data: { renderMode: 'client' }
   },
   {
     path: 'calendar/:date/add-meal/:mealId',
     component: AddMealComponent,
+    canActivate: [authGuard],
     data: { renderMode: 'client' }
   },
 
   // 🔴 Fallback
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '/auth-landing' }
 ];
 
 
@@ -84,26 +140,27 @@ export const routes: Routes = [
 // import { PhotoRecipeComponent } from './features/photo-recipe/photo-recipe';
 // import { ChatComponent } from './features/chat/chat';
 // import { ProfileComponent } from './features/profile/profile';
-// import { DayTrackingComponent} from './features/day-tracking/day-tracking';
+// import { DayTrackingComponent } from './features/day-tracking/day-tracking';
 // import { AddMealComponent } from './features/day-tracking/add-meal/add-meal';
 // import { AddWorkoutComponent } from './features/day-tracking/add-workout/add-workout';
 // import { ProfilePersonalInfoComponent } from './features/profile/personal-info/personal-info';
 // import { ObjectifComponent } from './features/profile/objectif/objectif';
 // import { LanguageComponent } from './features/profile/language/language';
 // import { AllergieComponent } from './features/profile/allergie/allergie';
+// import { CallbackComponent } from './callback.component'; 
+// import { AuthLandingComponent } from './features/auth-landing/auth-landing';
 
 // export const routes: Routes = [
+//   // ✅ Une seule redirection root
 //   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
+//   // 🟢 Routes statiques (prerender OK)
 //   { path: 'dashboard', component: DashboardComponent },
 //   { path: 'recipes', component: RecipesComponent },
-//   { path: 'recipes/:id', component: RecipeDetailComponent },
-
 //   { path: 'entrainement', component: EntrainementComponent },
 //   { path: 'photo-recipe', component: PhotoRecipeComponent },
 //   { path: 'chat', component: ChatComponent },
-//   { path: '', redirectTo: 'chat', pathMatch: 'full' },
-  
+
 //   { path: 'profil', component: ProfileComponent },
 //   { path: 'profil/personal-info', component: ProfilePersonalInfoComponent },
 //   { path: 'profil/objectif', component: ObjectifComponent },
@@ -111,11 +168,46 @@ export const routes: Routes = [
 //   { path: 'profil/allergie', component: AllergieComponent },
 
 //   { path: 'calendar', component: DayTrackingComponent },
-//   { path: 'calendar/:date', component: DayTrackingComponent },
-//   { path: 'calendar/:date/add-meal', component: AddMealComponent },
-//   { path: 'calendar/:date/add-workout', component: AddWorkoutComponent },
-//   { path: 'calendar/:date/add-meal/:mealId', component: AddMealComponent },  // ✅ AJOUTÉ : même composant !
 
+//   // 🔐 Callback Keycloak (PRIVÉ - pas dans menu)
+//   { path: 'callback', component: CallbackComponent },
+//   // 🔥 Page d'accueil = Auth landing
+//   { path: '', component: AuthLandingComponent },
+//   { path: 'login', component: AuthLandingComponent },
+
+
+//   // 🔵 Routes dynamiques → CLIENT ONLY (IMPORTANT)
+//   {
+//     path: 'recipes/:id',
+//     component: RecipeDetailComponent,
+//     data: { renderMode: 'client' }
+//   },
+//   {
+//     path: 'calendar/:date',
+//     component: DayTrackingComponent,
+//     data: { renderMode: 'client' }
+//   },
+//   {
+//     path: 'calendar/:date/add-meal',
+//     component: AddMealComponent,
+//     data: { renderMode: 'client' }
+//   },
+//   {
+//     path: 'calendar/:date/add-workout',
+//     component: AddWorkoutComponent,
+//     data: { renderMode: 'client' }
+//   },
+//   {
+//     path: 'calendar/:date/add-meal/:mealId',
+//     component: AddMealComponent,
+//     data: { renderMode: 'client' }
+//   },
+
+//   // 🔴 Fallback
 //   { path: '**', redirectTo: 'dashboard' }
 // ];
+
+
+
+
 
