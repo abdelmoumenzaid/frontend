@@ -1,8 +1,9 @@
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 24px 16px 32px;
+  padding: 80px 16px 32px;  /* ✅ Augmenté pour laisser la place à la navbar */
 }
+
 
 /* Header */
 .profile-header {

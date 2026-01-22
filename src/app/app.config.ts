@@ -10,24 +10,33 @@
 //     provideRouter(routes), provideClientHydration(withEventReplay())
 //   ]
 // };
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http';  // <-- ajoute ça
+import { provideHttpClient, withInterceptors, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-import localeFr from '@angular/common/locales/fr';
 
-registerLocaleData(localeFr);  // ✅ Locale FR
+// ✅ HTTP Interceptor to add auth token
+import { HttpInterceptorFn } from '@angular/common/http';
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const token = localStorage.getItem('access_token');
+  
+  if (token) {
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+  
+  return next(req);
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withFetch()),  // <-- ajoute cette ligne
-    provideClientHydration(withEventReplay()),
-    { provide: LOCALE_ID, useValue: 'fr-FR' }  // ✅ Français
-
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };

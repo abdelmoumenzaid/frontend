@@ -19,27 +19,25 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            
-          "assets": [
-            {
-              "glob": "**/*",
-              "input": "public",
-              "output": "/"
-            },
-            {
-              "glob": "**/*",
-              "input": "src/assets",
-              "output": "assets"
-            },
-            {
-              "glob": "**/*",
-              "input": "src/assets/keycloak-theme",
-              "output": "keycloak-theme"
-            },
-            "src/404.html",
-            "src/favicon.ico"
-          ],
-
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets/keycloak-theme",
+                "output": "keycloak-theme"
+              },
+              "src/404.html",
+              "src/favicon.ico"
+            ],
             "styles": [
               "src/styles.css"
             ],
@@ -52,13 +50,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "600kB",
+                  "maximumError": "700kB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kB",
-                  "maximumError": "10kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "15kB"
                 }
               ],
               "outputHashing": "all"

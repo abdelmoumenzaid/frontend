@@ -1,4 +1,5 @@
-<div class="tracking-page">
+<!-- day-tracking.html -->
+<div class="page tracking-page">  <!-- ← Ajoute "page" ici -->
     <!-- Header -->
     <div class="tracking-header">
         <div class="header-left">
@@ -87,40 +88,37 @@
         </div>
 
         <!-- Meals Section -->
-<div class="section">
-    <div class="section-header">
-        <h2>Repas du jour</h2>
-        <button class="text-btn" (click)="onAddMeal()">+ Ajouter</button>
-    </div>
+        <div class="section">
+            <div class="section-header">
+                <h2>Repas du jour</h2>
+                <button class="text-btn" (click)="onAddMeal()">+ Ajouter</button>
+            </div>
 
-    <div *ngIf="day.meals && day.meals.length > 0; else noMeals" class="meal-list">
-        <!-- ✅ REMPLACE CETTE PARTIE -->
-        <div *ngFor="let meal of day.meals; trackBy: trackByMealId" class="meal-item">
-            <button class="meal-card" (click)="onEditMeal(meal)">
-                <img [src]="meal.imageUrl" [alt]="meal.recipeName" />
-                <div class="meal-body">
-                    <div class="meal-header">
-                        <span class="meal-label">{{ meal.label }}</span>
-                        <span class="meal-time">{{ meal.time }}</span>
-                    </div>
-                    <h3>{{ meal.recipeName }}</h3>
-                    <p class="muted">
-                        {{ meal.calories }} kcal · {{ meal.servings }} portion
-                    </p>
+            <div *ngIf="day.meals && day.meals.length > 0; else noMeals" class="meal-list">
+                <div *ngFor="let meal of day.meals; trackBy: trackByMealId" class="meal-item">
+                    <button class="meal-card" (click)="onEditMeal(meal)">
+                        <img [src]="meal.imageUrl" [alt]="meal.recipeName" />
+                        <div class="meal-body">
+                            <div class="meal-header">
+                                <span class="meal-label">{{ meal.label }}</span>
+                                <span class="meal-time">{{ meal.time }}</span>
+                            </div>
+                            <h3>{{ meal.recipeName }}</h3>
+                            <p class="muted">
+                                {{ meal.calories }} kcal · {{ meal.servings }} portion
+                            </p>
+                        </div>
+                    </button>
+                    <button class="delete-btn" (click)="onDeleteMeal(meal.id); $event.stopPropagation()">
+                        🗑️
+                    </button>
                 </div>
-            </button>
-            <!-- ✅ Bouton supprimer (optionnel) -->
-            <button class="delete-btn" (click)="onDeleteMeal(meal.id); $event.stopPropagation()">
-                🗑️
-            </button>
+            </div>
+
+            <ng-template #noMeals>
+                <p class="empty">Aucun repas loggé pour ce jour.</p>
+            </ng-template>
         </div>
-    </div>
-
-    <ng-template #noMeals>
-        <p class="empty">Aucun repas loggé pour ce jour.</p>
-    </ng-template>
-</div>
-
 
         <!-- Workouts Section -->
         <div class="section">

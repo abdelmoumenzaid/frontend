@@ -23,11 +23,7 @@ export class Navbar {
     this.menuOpen = false;
   }
 
-  logout() {
-    this.closeMenu(); // Ferme menu avant logout
-    console.log('🚪 Logout clicked');
-    this.authService.logout(); // Redirect Keycloak
-  }
+  
 
   get isAuthenticated() {
     return this.authService.isAuthenticated();
